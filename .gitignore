@@ -1,0 +1,15 @@
+# Python virtual environment
+.venv/
+venv/
+
+# Python bytecode / caches
+__pycache__/
+*.pyc
+
+# SQLite database files (never commit real data)
+*.db
+
+# Editor / OS junk
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,8 @@
+# Web framework that powers our API
+fastapi==0.121.2
+# ASGI server that actually runs the app ("standard" adds nice extras like auto-reload)
+uvicorn[standard]==0.38.0
+# ORM: lets us talk to the SQLite database using Python classes instead of raw SQL
+SQLAlchemy==2.0.44
+# Data validation / serialization for request + response bodies
+pydantic==2.12.4

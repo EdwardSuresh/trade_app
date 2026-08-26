@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trade Station</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="logo">Trade Station</h1>
+
+      <div class="header-controls">
+        <!-- Pick which account we are looking at -->
+        <label class="field">
+          <span>Active account</span>
+          <select id="account-select">
+            <option value="">Loading...</option>
+          </select>
+        </label>
+
+        <!-- Create a brand new account -->
+        <form id="new-account-form" class="inline-form">
+          <input id="new-owner-name" type="text" placeholder="Owner name" required />
+          <input id="new-email" type="email" placeholder="E-mail" required />
+          <button type="submit" class="btn btn-secondary">New account</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Green success / red error messages appear here -->
+    <div id="banner" class="banner hidden"></div>
+
+    <!-- ===================== SUMMARY CARDS ===================== -->
+    <section class="cards">
+      <div class="card">
+        <div class="card-label">Cash Balance</div>
+        <div class="card-value" id="card-cash">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Total Invested</div>
+        <div class="card-value" id="card-invested">$0.00</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Number of Trades</div>
+        <div class="card-value" id="card-trades">0</div>
+      </div>
+    </section>
+
+    <!-- ===================== PLACE TRADE ===================== -->
+    <section class="panel">
+      <h2>Place a Trade</h2>
+      <form id="trade-form" class="trade-form">
+        <label class="field">
+          <span>Symbol</span>
+          <input id="trade-symbol" type="text" placeholder="AAPL" required />
+        </label>
+
+        <label class="field">
+          <span>Side</span>
+          <select id="trade-side">
+            <option value="BUY">BUY</option>
+            <option value="SELL">SELL</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Quantity</span>
+          <input id="trade-quantity" type="number" min="1" step="1" placeholder="10" required />
+        </label>
+
+        <label class="field">
+          <span>Price per share</span>
+          <input id="trade-price" type="number" min="0.01" step="0.01" placeholder="150.25" required />
+        </label>
+
+        <button type="submit" class="btn btn-primary">Place Trade</button>
+      </form>
+    </section>
+
+    <!-- ===================== PORTFOLIO ===================== -->
+    <section class="panel">
+      <h2>Portfolio</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th class="num">Net Quantity</th>
+              <th class="num">Average Buy Price</th>
+              <th class="num">Invested Amount</th>
+            </tr>
+          </thead>
+          <tbody id="portfolio-body">
+            <tr><td colspan="4" class="empty">No holdings yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== TRADE HISTORY ===================== -->
+    <section class="panel">
+      <h2>Trade History</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Side</th>
+              <th class="num">Quantity</th>
+              <th class="num">Price</th>
+              <th class="num">Total Value</th>
+              <th>Status</th>
+              <th>Time</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr><td colspan="8" class="empty">No trades yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Virtual trading demo &middot; <a href="/docs">API documentation</a>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
