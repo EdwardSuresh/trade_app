@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade Station — Complete Learning Guide</title>
+<style>
+  :root{
+    --bg:#F5F7F8; --panel:#FFFFFF; --ink:#1C2530; --muted:#5B6B7A;
+    --accent:#134E7C; --accent-soft:#E4EEF6; --line:#D9E1E8;
+    --code-bg:#1F252B; --code-ink:#E6EDF3; --buy:#177245; --sell:#A33B3B;
+    --amber:#8A5A13; --amber-soft:#FBF3E4;
+    --mono:Consolas,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif;}
+  header{background:var(--accent);color:#fff;padding:26px 20px 18px}
+  header h1{margin:0;font-size:1.35rem;font-weight:600}
+  header p{margin:6px 0 0;opacity:.85;font-size:.9rem}
+  header .crumb{font-family:var(--mono);font-size:.75rem;opacity:.75}
+  nav{display:flex;flex-wrap:wrap;background:#0E3A5D;padding:0 8px;position:sticky;top:0;z-index:5}
+  nav button{appearance:none;border:0;background:transparent;color:#C6D8E6;
+    font:600 .78rem var(--mono);padding:11px 12px;cursor:pointer;border-radius:8px 8px 0 0;
+    display:flex;gap:7px;align-items:center;margin-top:6px}
+  nav button .dot{width:8px;height:8px;border-radius:50%;background:#7FAECB;flex:none}
+  nav button.active{background:var(--bg);color:var(--ink)}
+  nav button:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+  main{max-width:980px;margin:0 auto;padding:22px 16px 60px}
+  section.tab{display:none}
+  section.tab.active{display:block}
+  h2{font-size:1.15rem;margin:26px 0 10px;color:var(--accent)}
+  h3{font-size:1rem;margin:22px 0 8px}
+  p{margin:8px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0}
+  .tip{background:var(--amber-soft);border-left:4px solid var(--amber);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.92rem}
+  .tip b{color:var(--amber)}
+  code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem;background:var(--panel)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  tr:nth-child(even) td{background:#F8FAFB}
+  .tablewrap{overflow-x:auto}
+  ol.code{margin:10px 0;padding:14px 10px 14px 0;background:var(--code-bg);color:var(--code-ink);
+    border-radius:10px;list-style:none;counter-reset:ln;font-family:var(--mono);
+    font-size:.78rem;line-height:1.55;overflow-x:auto}
+  ol.code li{counter-increment:ln;white-space:pre;padding-left:56px;position:relative;min-width:max-content}
+  ol.code li::before{content:counter(ln);position:absolute;left:0;width:40px;text-align:right;
+    color:#6B7A85;font-size:.7rem;top:2px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0}
+  summary{cursor:pointer;padding:13px 16px;font-weight:600;font-family:var(--mono);font-size:.88rem;color:var(--accent)}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  details .inner{padding:6px 16px 16px}
+  figure{margin:14px 0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto}
+  figcaption{font-size:.82rem;color:var(--muted);margin-top:8px}
+  ul.libs li{margin:8px 0}
+  ol.steps{counter-reset:s;list-style:none;padding:0}
+  ol.steps>li{counter-increment:s;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px 14px 58px;margin:12px 0;position:relative}
+  ol.steps>li::before{content:counter(s);position:absolute;left:14px;top:14px;width:30px;height:30px;
+    border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;
+    justify-content:center;font-weight:700;font-size:.9rem}
+  ol.steps b.t{display:block;margin-bottom:4px}
+  pre.cmd{background:var(--code-bg);color:var(--code-ink);font-family:var(--mono);font-size:.82rem;
+    padding:9px 12px;border-radius:8px;overflow-x:auto;margin:8px 0}
+  @media (prefers-reduced-motion:no-preference){section.tab.active{animation:fade .18s ease}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="crumb">trade_app / learning_guide</div>
+  <h1>Trade Station — Complete Learning Guide</h1>
+  <p>Line-by-line walkthrough · Architecture · ER &amp; database model · Component &amp; deployment views · Sequence flow · Setup from GitHub</p>
+</header>
+
+<nav id="tabs">
+  <button class="active" data-t="overview"><span class="dot"></span>overview.md</button>
+  <button data-t="arch"><span class="dot"></span>architecture.svg</button>
+  <button data-t="data"><span class="dot"></span>data_model.svg</button>
+  <button data-t="comp"><span class="dot"></span>components.svg</button>
+  <button data-t="code"><span class="dot"></span>walkthrough.py</button>
+  <button data-t="seq"><span class="dot"></span>sequence.svg</button>
+  <button data-t="setup"><span class="dot"></span>setup_guide.sh</button>
+  <button data-t="deploy"><span class="dot"></span>run_deploy.sh</button>
+</nav>
+
+<main>
+
+<!-- ============ TAB 1: OVERVIEW ============ -->
+<section class="tab active" id="overview">
+  <h2>What are we building? (5W + 1H)</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Question</th><th>Answer</th></tr>
+    <tr><td><b>What</b></td><td>A paper-trading (virtual money) stock application: accounts start with $100,000 of virtual cash, place BUY/SELL trades, and see their portfolio, cash, and history — through a web page <i>and</i> an API.</td></tr>
+    <tr><td><b>Why</b></td><td>It adds the two skills the Loan project didn't cover: a <b>frontend</b> (a real web page calling your API with JavaScript) and <b>multi-table business logic</b> (a trade must check cash, record itself, and update the balance — all in one transaction).</td></tr>
+    <tr><td><b>Who</b></td><td>Three kinds of clients use the same API: the browser page (frontend/), the Swagger UI at /docs, and the demo.py script. That is the core lesson — one backend, many clients.</td></tr>
+    <tr><td><b>When</b></td><td>Everything runs while <code>uvicorn</code> is running. Trades execute instantly at the price you type (no live market feed — that keeps the learning focused).</td></tr>
+    <tr><td><b>Where</b></td><td>On your machine at <code>http://127.0.0.1:8000</code> (page) and <code>/docs</code> (API), data in <code>trades.db</code>; the <i>source code</i> also lives in your GitHub repository via git push.</td></tr>
+    <tr><td><b>How</b></td><td>Browser JavaScript <code>fetch()</code> → FastAPI route → Pydantic validation → business rules (cash/shares checks) → SQLAlchemy ORM → SQLite. The same FastAPI process also serves the HTML/CSS/JS files.</td></tr>
+  </table></div>
+
+  <h2>Files in the project</h2>
+  <div class="tablewrap"><table>
+    <tr><th>File</th><th>Role</th><th>Real-world analogy</th></tr>
+    <tr><td><code>app/database.py</code></td><td>Database connection: engine, session factory, <code>get_db()</code> dependency (one session per request).</td><td>The exchange's back-office door — every record passes through it.</td></tr>
+    <tr><td><code>app/models.py</code></td><td>ORM tables: <b>Account</b> and <b>Trade</b>, linked one-to-many with cascade delete.</td><td>The account ledger and the trade blotter — the two record books every brokerage keeps.</td></tr>
+    <tr><td><code>app/schema.py</code></td><td>Pydantic shapes for requests/responses, computed <code>total_value</code>, and the portfolio structures.</td><td>The compliance desk: rejects malformed orders before they reach the books.</td></tr>
+    <tr><td><code>app/main.py</code></td><td>All API endpoints, the BUY/SELL/cancel business rules, portfolio calculation, and static-file serving of the frontend.</td><td>The trading floor: order desk, cashier, and reporting counter in one room.</td></tr>
+    <tr><td><code>frontend/index.html</code></td><td>The page structure: account picker, summary cards, trade form, portfolio and history tables.</td><td>The broker's terminal screen layout.</td></tr>
+    <tr><td><code>frontend/style.css</code></td><td>Visual styling: cards, tables, green/red BUY-SELL coloring, banners.</td><td>The screen's color scheme — green means buy, red means sell, everywhere in finance.</td></tr>
+    <tr><td><code>frontend/script.js</code></td><td>The page's brain: fetches data from /api, submits trades, refreshes everything after each action.</td><td>The clerk who fills forms, sends them to the floor, and updates the board.</td></tr>
+    <tr><td><code>demo.py</code></td><td>Standard-library test client: creates accounts, places trades, deliberately triggers "Insufficient funds/shares", prints portfolios.</td><td>The auditor who runs a scripted test of every rule.</td></tr>
+    <tr><td><code>requirements.txt</code></td><td>Third-party libraries for pip.</td><td>The shopping list.</td></tr>
+    <tr><td><code>.gitignore</code></td><td>Keeps <code>.venv/</code>, <code>__pycache__/</code>, and <code>*.db</code> out of GitHub.</td><td>The "do not photocopy" list — machine-specific files stay local.</td></tr>
+    <tr><td><code>trades.db</code></td><td>Auto-created SQLite file holding accounts and trades.</td><td>The vault.</td></tr>
+  </table></div>
+
+  <h2>Libraries used</h2>
+  <div class="card"><ul class="libs">
+    <li><b>FastAPI</b> — the web framework: decorated Python functions become HTTP endpoints, with automatic docs at <code>/docs</code>. New in this project: <code>StaticFiles</code>, which lets the same app serve the frontend files.</li>
+    <li><b>Uvicorn</b> — the ASGI server listening on port 8000 and passing every request (page loads <i>and</i> API calls) to FastAPI. <code>--reload</code> restarts it when you save.</li>
+    <li><b>SQLAlchemy</b> — the ORM: Python classes for tables, Python method calls instead of raw SQL, and sessions that make "check cash + save trade + update balance" one atomic commit.</li>
+    <li><b>Pydantic</b> — validation of incoming JSON (types, required fields) and shaping of outgoing JSON, including the computed <code>total_value</code> field.</li>
+    <li><b>SQLite</b> (built into Python) — the zero-setup file database behind it all.</li>
+    <li><b>Browser Fetch API</b> (built into every browser, used in script.js) — JavaScript's way of making HTTP calls; the frontend equivalent of <code>urllib</code>.</li>
+    <li><b>urllib.request &amp; json</b> (standard library, demo.py) — HTTP + JSON without installing anything.</li>
+    <li><b>Git</b> (tool, not a library) — version control: <code>add → commit → push</code> snapshots your source code to GitHub.</li>
+  </ul></div>
+
+  <div class="tip"><b>Compared to the Loan project:</b> same skeleton (database.py / models.py / schema.py / main.py), three new ideas — a frontend served by the API, money-moving business rules that touch two tables, and Git/GitHub for versioning. Everything you learned there transfers directly.</div>
+</section>
+
+<!-- ============ TAB 2: ARCHITECTURE ============ -->
+<section class="tab" id="arch">
+  <h2>Architecture diagram</h2>
+  <p>Same layered idea as the Loan project, with one addition: the FastAPI process now serves the frontend files too, so the browser talks to it twice — once to load the page, then repeatedly for data.</p>
+
+  <figure>
+  <svg viewBox="0 0 780 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram" style="min-width:660px;width:100%;height:auto">
+    <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L8,4.5 L0,9 z" fill="#134E7C"/></marker></defs>
+    <style>
+      .box{fill:#fff;stroke:#134E7C;stroke-width:1.6}
+      .lbl{font:600 14px Consolas,monospace;fill:#1C2530}
+      .sub{font:12px 'Segoe UI',sans-serif;fill:#5B6B7A}
+      .band{font:700 11px Consolas,monospace;fill:#134E7C;letter-spacing:1px}
+      .flow{stroke:#134E7C;stroke-width:1.8;fill:none;marker-end:url(#ar)}
+    </style>
+    <text x="16" y="26" class="band">CLIENTS</text>
+    <rect x="55" y="38" width="200" height="74" rx="10" class="box"/>
+    <text x="155" y="62" text-anchor="middle" class="lbl">Browser</text>
+    <text x="155" y="81" text-anchor="middle" class="sub">loads frontend page, then</text>
+    <text x="155" y="97" text-anchor="middle" class="sub">fetch() calls to /api/*</text>
+    <rect x="295" y="38" width="200" height="74" rx="10" class="box"/>
+    <text x="395" y="62" text-anchor="middle" class="lbl">Swagger UI /docs</text>
+    <text x="395" y="86" text-anchor="middle" class="sub">auto-generated tester</text>
+    <rect x="535" y="38" width="200" height="74" rx="10" class="box"/>
+    <text x="635" y="62" text-anchor="middle" class="lbl">demo.py</text>
+    <text x="635" y="86" text-anchor="middle" class="sub">urllib + json client</text>
+
+    <line x1="155" y1="112" x2="155" y2="152" class="flow"/>
+    <line x1="395" y1="112" x2="395" y2="152" class="flow"/>
+    <line x1="635" y1="112" x2="635" y2="152" class="flow"/>
+    <text x="395" y="142" class="sub" text-anchor="middle">HTTP · http://127.0.0.1:8000</text>
+
+    <text x="16" y="174" class="band">SERVER</text>
+    <rect x="55" y="158" width="680" height="52" rx="10" class="box" fill="#E4EEF6"/>
+    <text x="395" y="181" text-anchor="middle" class="lbl">Uvicorn (ASGI server, port 8000)</text>
+    <text x="395" y="199" text-anchor="middle" class="sub">one process serves BOTH the page files and the API</text>
+    <line x1="395" y1="210" x2="395" y2="244" class="flow"/>
+
+    <text x="16" y="266" class="band">APP</text>
+    <rect x="55" y="250" width="680" height="196" rx="10" class="box"/>
+    <text x="395" y="274" text-anchor="middle" class="lbl">app/main.py — FastAPI "Trade Station API"</text>
+    <rect x="80" y="290" width="150" height="136" rx="8" class="box" stroke-dasharray="4 3"/>
+    <text x="155" y="314" text-anchor="middle" class="lbl" font-size="12">StaticFiles</text>
+    <text x="155" y="336" text-anchor="middle" class="sub">GET / →</text>
+    <text x="155" y="352" text-anchor="middle" class="sub">frontend/index.html</text>
+    <text x="155" y="368" text-anchor="middle" class="sub">style.css, script.js</text>
+    <rect x="250" y="290" width="150" height="136" rx="8" class="box" stroke-dasharray="4 3"/>
+    <text x="325" y="314" text-anchor="middle" class="lbl" font-size="12">Account routes</text>
+    <text x="325" y="336" text-anchor="middle" class="sub">/api/accounts</text>
+    <text x="325" y="352" text-anchor="middle" class="sub">create · list · get</text>
+    <text x="325" y="368" text-anchor="middle" class="sub">delete · portfolio</text>
+    <rect x="420" y="290" width="150" height="136" rx="8" class="box" stroke-dasharray="4 3"/>
+    <text x="495" y="314" text-anchor="middle" class="lbl" font-size="12">Trade routes</text>
+    <text x="495" y="336" text-anchor="middle" class="sub">/api/trades</text>
+    <text x="495" y="352" text-anchor="middle" class="sub">place (BUY/SELL rules)</text>
+    <text x="495" y="368" text-anchor="middle" class="sub">list · cancel</text>
+    <rect x="590" y="290" width="125" height="136" rx="8" class="box" stroke-dasharray="4 3"/>
+    <text x="652" y="314" text-anchor="middle" class="lbl" font-size="12">schema.py</text>
+    <text x="652" y="336" text-anchor="middle" class="sub">validate in</text>
+    <text x="652" y="352" text-anchor="middle" class="sub">shape out</text>
+    <text x="652" y="368" text-anchor="middle" class="sub">total_value</text>
+
+    <line x1="395" y1="446" x2="395" y2="480" class="flow"/>
+    <text x="16" y="502" class="band">ORM</text>
+    <rect x="55" y="486" width="330" height="86" rx="10" class="box"/>
+    <text x="220" y="510" text-anchor="middle" class="lbl">app/models.py</text>
+    <text x="220" y="530" text-anchor="middle" class="sub">Account ⟷ Trade (1-to-many)</text>
+    <text x="220" y="548" text-anchor="middle" class="sub">cascade delete</text>
+    <rect x="405" y="486" width="330" height="86" rx="10" class="box"/>
+    <text x="570" y="510" text-anchor="middle" class="lbl">app/database.py</text>
+    <text x="570" y="530" text-anchor="middle" class="sub">engine · SessionLocal · Base</text>
+    <text x="570" y="548" text-anchor="middle" class="sub">get_db() per request</text>
+    <line x1="385" y1="529" x2="405" y2="529" class="flow"/>
+
+    <line x1="395" y1="572" x2="395" y2="608" class="flow"/>
+    <text x="475" y="598" class="sub">SQL INSERT / SELECT / UPDATE</text>
+    <text x="16" y="630" class="band">DISK</text>
+    <rect x="235" y="614" width="320" height="60" rx="10" class="box" fill="#E4EEF6"/>
+    <text x="395" y="639" text-anchor="middle" class="lbl">trades.db (SQLite)</text>
+    <text x="395" y="658" text-anchor="middle" class="sub">tables: accounts · trades</text>
+  </svg>
+  <figcaption>The one new arrow compared to the Loan project: the StaticFiles block. The browser's first request fetches the page itself; after that, script.js turns the browser into an API client just like demo.py.</figcaption>
+  </figure>
+
+  <h3>Why one process for both frontend and API?</h3>
+  <div class="card">
+    <p>Big companies often run the frontend and backend as separate deployments. For learning, serving both from FastAPI removes two whole problems: no second server to start, and no CORS (cross-origin) configuration — because the page and the API share the same address, the browser considers them the same site.</p>
+    <p>The mount order matters: <code>/api/*</code> routes and <code>/docs</code> are registered <i>first</i>, and StaticFiles is mounted at <code>/</code> <i>last</i>, so it only catches whatever the API didn't claim.</p>
+  </div>
+</section>
+
+<!-- ============ TAB 3: DATA MODEL ============ -->
+<section class="tab" id="data">
+  <h2>Entity diagram (conceptual view)</h2>
+  <p>The entity–relationship view answers one question: <i>what things exist and how do they relate?</i> Here there are only two entities.</p>
+
+  <figure>
+  <svg viewBox="0 0 760 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entity relationship diagram" style="min-width:600px;width:100%;height:auto">
+    <style>
+      .ent{fill:#E4EEF6;stroke:#134E7C;stroke-width:2}
+      .elbl{font:700 16px Consolas,monospace;fill:#134E7C}
+      .esub{font:12px 'Segoe UI',sans-serif;fill:#5B6B7A}
+      .rel{stroke:#134E7C;stroke-width:2;fill:none}
+      .card2{font:700 13px Consolas,monospace;fill:#1C2530}
+      .rlbl{font:12.5px 'Segoe UI',sans-serif;fill:#1C2530}
+    </style>
+    <rect x="60" y="70" width="220" height="100" rx="12" class="ent"/>
+    <text x="170" y="112" text-anchor="middle" class="elbl">ACCOUNT</text>
+    <text x="170" y="136" text-anchor="middle" class="esub">a person with virtual cash</text>
+    <rect x="480" y="70" width="220" height="100" rx="12" class="ent"/>
+    <text x="590" y="112" text-anchor="middle" class="elbl">TRADE</text>
+    <text x="590" y="136" text-anchor="middle" class="esub">one BUY or SELL order</text>
+    <line x1="280" y1="120" x2="480" y2="120" class="rel"/>
+    <text x="380" y="106" text-anchor="middle" class="rlbl">places</text>
+    <!-- crow's foot: one side -->
+    <line x1="300" y1="108" x2="300" y2="132" class="rel"/>
+    <text x="300" y="152" text-anchor="middle" class="card2">1</text>
+    <!-- many side -->
+    <line x1="480" y1="120" x2="460" y2="108" class="rel"/>
+    <line x1="480" y1="120" x2="460" y2="132" class="rel"/>
+    <text x="458" y="152" text-anchor="middle" class="card2">N</text>
+    <text x="380" y="200" text-anchor="middle" class="esub">One account places many trades · every trade belongs to exactly one account</text>
+  </svg>
+  <figcaption>Read it aloud: "one Account places N Trades." That single sentence generates the ForeignKey, the relationship() lines, and the cascade rule in models.py.</figcaption>
+  </figure>
+
+  <h2>Database diagram (physical view)</h2>
+  <p>The physical view shows the actual tables SQLite creates — every column, its type, and the key that ties the tables together.</p>
+
+  <figure>
+  <svg viewBox="0 0 780 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Database schema diagram" style="min-width:640px;width:100%;height:auto">
+    <style>
+      .thead{fill:#134E7C}
+      .tname{font:700 14px Consolas,monospace;fill:#fff}
+      .row{font:12.5px Consolas,monospace;fill:#1C2530}
+      .typ{font:11.5px Consolas,monospace;fill:#5B6B7A}
+      .key{font:700 10px Consolas,monospace;fill:#8A5A13}
+      .tbl{fill:#fff;stroke:#134E7C;stroke-width:1.6}
+      .fk{stroke:#8A5A13;stroke-width:2;fill:none;stroke-dasharray:6 3}
+    </style>
+    <!-- accounts -->
+    <rect x="50" y="30" width="300" height="204" rx="10" class="tbl"/>
+    <rect x="50" y="30" width="300" height="34" rx="10" class="thead"/>
+    <rect x="50" y="50" width="300" height="14" class="thead"/>
+    <text x="200" y="53" text-anchor="middle" class="tname">accounts</text>
+    <text x="66" y="88"  class="row">id</text><text x="180" y="88"  class="typ">INTEGER</text><text x="300" y="88" class="key">PK</text>
+    <text x="66" y="114" class="row">owner_name</text><text x="180" y="114" class="typ">TEXT NOT NULL</text>
+    <text x="66" y="140" class="row">email</text><text x="180" y="140" class="typ">TEXT UNIQUE</text>
+    <text x="66" y="166" class="row">cash_balance</text><text x="180" y="166" class="typ">REAL (100000.0)</text>
+    <text x="66" y="192" class="row">created_at</text><text x="180" y="192" class="typ">DATETIME</text>
+    <!-- trades -->
+    <rect x="430" y="30" width="300" height="282" rx="10" class="tbl"/>
+    <rect x="430" y="30" width="300" height="34" rx="10" class="thead"/>
+    <rect x="430" y="50" width="300" height="14" class="thead"/>
+    <text x="580" y="53" text-anchor="middle" class="tname">trades</text>
+    <text x="446" y="88"  class="row">id</text><text x="575" y="88"  class="typ">INTEGER</text><text x="688" y="88" class="key">PK</text>
+    <text x="446" y="114" class="row">account_id</text><text x="575" y="114" class="typ">INTEGER</text><text x="688" y="114" class="key">FK</text>
+    <text x="446" y="140" class="row">symbol</text><text x="575" y="140" class="typ">TEXT NOT NULL</text>
+    <text x="446" y="166" class="row">side</text><text x="575" y="166" class="typ">TEXT BUY|SELL</text>
+    <text x="446" y="192" class="row">quantity</text><text x="575" y="192" class="typ">INTEGER &gt; 0</text>
+    <text x="446" y="218" class="row">price</text><text x="575" y="218" class="typ">REAL &gt; 0</text>
+    <text x="446" y="244" class="row">status</text><text x="575" y="244" class="typ">TEXT (EXECUTED)</text>
+    <text x="446" y="270" class="row">created_at</text><text x="575" y="270" class="typ">DATETIME</text>
+    <!-- FK line -->
+    <path d="M 350 84 C 400 84 400 110 430 110" class="fk"/>
+    <text x="372" y="72" class="key">accounts.id = trades.account_id</text>
+  </svg>
+  <figcaption>The dashed amber line is the foreign key: every trades.account_id must equal some accounts.id. Delete an account and (via the cascade rule in models.py) its trades go with it.</figcaption>
+  </figure>
+
+  <h3>How the two diagrams map to code</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Diagram element</th><th>Code in models.py</th></tr>
+    <tr><td>ACCOUNT entity / accounts table</td><td><code>class Account(Base)</code> with <code>__tablename__ = "accounts"</code></td></tr>
+    <tr><td>TRADE entity / trades table</td><td><code>class Trade(Base)</code> with <code>__tablename__ = "trades"</code></td></tr>
+    <tr><td>"1" end of the relationship</td><td><code>trades = relationship("Trade", back_populates="account", cascade="all, delete-orphan")</code></td></tr>
+    <tr><td>"N" end + dashed FK line</td><td><code>account_id = Column(Integer, ForeignKey("accounts.id"))</code> and <code>account = relationship(...)</code></td></tr>
+    <tr><td>PK badges</td><td><code>primary_key=True</code></td></tr>
+    <tr><td>UNIQUE on email</td><td><code>unique=True</code></td></tr>
+    <tr><td>Defaults (100000.0, EXECUTED, now)</td><td><code>default=...</code> on each Column</td></tr>
+  </table></div>
+
+  <div class="tip"><b>Interesting design point:</b> there is no "holdings" table. Your current position in a stock is <i>calculated</i> from the trade history (BUYs minus SELLs) by the portfolio endpoint. Storing only facts (trades) and computing state (holdings) avoids the two ever disagreeing — a pattern worth remembering.</div>
+</section>
+
+<!-- ============ TAB 4: COMPONENT & DEPLOYMENT ============ -->
+<section class="tab" id="comp">
+  <h2>Component diagram</h2>
+  <p>Components are the replaceable building blocks and the interfaces between them. Arrows mean "uses".</p>
+
+  <figure>
+  <svg viewBox="0 0 780 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Component diagram" style="min-width:640px;width:100%;height:auto">
+    <defs><marker id="ca" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L8,4.5 L0,9 z" fill="#134E7C"/></marker></defs>
+    <style>
+      .cbox{fill:#fff;stroke:#134E7C;stroke-width:1.6}
+      .cgrp{fill:none;stroke:#5B6B7A;stroke-width:1.3;stroke-dasharray:6 4}
+      .clbl{font:600 13px Consolas,monospace;fill:#1C2530}
+      .csub{font:11.5px 'Segoe UI',sans-serif;fill:#5B6B7A}
+      .glbl{font:700 11px Consolas,monospace;fill:#5B6B7A;letter-spacing:1px}
+      .cflow{stroke:#134E7C;stroke-width:1.7;fill:none;marker-end:url(#ca)}
+      .iface{font:11px Consolas,monospace;fill:#8A5A13}
+    </style>
+    <!-- Frontend group -->
+    <rect x="40" y="34" width="300" height="170" rx="12" class="cgrp"/>
+    <text x="56" y="56" class="glbl">FRONTEND COMPONENT</text>
+    <rect x="60" y="70" width="120" height="52" rx="8" class="cbox"/>
+    <text x="120" y="92" text-anchor="middle" class="clbl">index.html</text>
+    <text x="120" y="110" text-anchor="middle" class="csub">structure</text>
+    <rect x="200" y="70" width="120" height="52" rx="8" class="cbox"/>
+    <text x="260" y="92" text-anchor="middle" class="clbl">style.css</text>
+    <text x="260" y="110" text-anchor="middle" class="csub">appearance</text>
+    <rect x="60" y="136" width="260" height="52" rx="8" class="cbox"/>
+    <text x="190" y="158" text-anchor="middle" class="clbl">script.js</text>
+    <text x="190" y="176" text-anchor="middle" class="csub">behavior: fetch(), refresh, forms</text>
+    <!-- Backend group -->
+    <rect x="410" y="34" width="330" height="300" rx="12" class="cgrp"/>
+    <text x="426" y="56" class="glbl">BACKEND COMPONENT (FastAPI)</text>
+    <rect x="430" y="70" width="290" height="52" rx="8" class="cbox"/>
+    <text x="575" y="92" text-anchor="middle" class="clbl">main.py — routes + rules</text>
+    <text x="575" y="110" text-anchor="middle" class="csub">accounts · trades · portfolio · static</text>
+    <rect x="430" y="140" width="137" height="52" rx="8" class="cbox"/>
+    <text x="498" y="162" text-anchor="middle" class="clbl">schema.py</text>
+    <text x="498" y="180" text-anchor="middle" class="csub">validation</text>
+    <rect x="583" y="140" width="137" height="52" rx="8" class="cbox"/>
+    <text x="651" y="162" text-anchor="middle" class="clbl">models.py</text>
+    <text x="651" y="180" text-anchor="middle" class="csub">ORM tables</text>
+    <rect x="430" y="210" width="290" height="52" rx="8" class="cbox"/>
+    <text x="575" y="232" text-anchor="middle" class="clbl">database.py</text>
+    <text x="575" y="250" text-anchor="middle" class="csub">engine · sessions</text>
+    <rect x="430" y="278" width="290" height="42" rx="8" class="cbox" fill="#E4EEF6"/>
+    <text x="575" y="304" text-anchor="middle" class="clbl">SQLite — trades.db</text>
+    <!-- Demo client -->
+    <rect x="40" y="260" width="300" height="60" rx="8" class="cbox"/>
+    <text x="190" y="284" text-anchor="middle" class="clbl">demo.py component</text>
+    <text x="190" y="303" text-anchor="middle" class="csub">scripted API client (urllib)</text>
+    <!-- Interfaces -->
+    <line x1="340" y1="162" x2="430" y2="96" class="cflow"/>
+    <text x="352" y="118" class="iface">REST /api (JSON)</text>
+    <line x1="340" y1="290" x2="430" y2="290" class="cflow"/>
+    <line x1="378" y1="290" x2="378" y2="200" fill="none" stroke="none"/>
+    <text x="352" y="282" class="iface">REST /api</text>
+    <line x1="575" y1="122" x2="498" y2="140" class="cflow"/>
+    <line x1="575" y1="122" x2="651" y2="140" class="cflow"/>
+    <line x1="651" y1="192" x2="590" y2="210" class="cflow"/>
+    <line x1="575" y1="262" x2="575" y2="278" class="cflow"/>
+    <text x="588" y="274" class="iface">SQL</text>
+    <!-- static serving arrow -->
+    <path d="M 430 84 C 380 60 340 60 320 70" fill="none" stroke="#134E7C" stroke-width="1.7" marker-end="url(#ca)"/>
+    <text x="330" y="52" class="iface">serves files (GET /)</text>
+    <text x="390" y="440" text-anchor="middle" class="csub">Any component can be swapped without touching the others: replace script.js with a React app, or SQLite with PostgreSQL — the REST and SQL interfaces stay the same.</text>
+  </svg>
+  <figcaption>Two client components (frontend, demo.py) use one backend component through the same REST interface; inside the backend, each file uses only its neighbor.</figcaption>
+  </figure>
+
+  <h2>Deployment diagram</h2>
+  <p>Where does everything physically run? During development, almost everything is on one machine — plus GitHub in the cloud holding your source code.</p>
+
+  <figure>
+  <svg viewBox="0 0 780 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Deployment diagram" style="min-width:640px;width:100%;height:auto">
+    <defs><marker id="da" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L8,4.5 L0,9 z" fill="#134E7C"/></marker></defs>
+    <style>
+      .node{fill:#F8FAFB;stroke:#134E7C;stroke-width:2}
+      .node3d{fill:#E4EEF6;stroke:#134E7C;stroke-width:2}
+      .dlbl{font:700 13px Consolas,monospace;fill:#134E7C}
+      .dbox{fill:#fff;stroke:#134E7C;stroke-width:1.4}
+      .dtxt{font:600 12px Consolas,monospace;fill:#1C2530}
+      .dsub{font:11px 'Segoe UI',sans-serif;fill:#5B6B7A}
+      .dflow{stroke:#134E7C;stroke-width:1.7;fill:none;marker-end:url(#da)}
+    </style>
+    <!-- Dev machine node -->
+    <rect x="30" y="30" width="480" height="340" rx="14" class="node"/>
+    <text x="50" y="58" class="dlbl">«device» Your laptop / desktop</text>
+    <!-- browser -->
+    <rect x="55" y="80" width="190" height="70" rx="8" class="dbox"/>
+    <text x="150" y="106" text-anchor="middle" class="dtxt">Browser</text>
+    <text x="150" y="124" text-anchor="middle" class="dsub">runs index.html + script.js</text>
+    <!-- vscode -->
+    <rect x="55" y="170" width="190" height="70" rx="8" class="dbox"/>
+    <text x="150" y="196" text-anchor="middle" class="dtxt">VS Code + Claude Code</text>
+    <text x="150" y="214" text-anchor="middle" class="dsub">edit code · git · terminal</text>
+    <!-- uvicorn process -->
+    <rect x="280" y="80" width="205" height="110" rx="8" class="node3d"/>
+    <text x="382" y="106" text-anchor="middle" class="dtxt">«process» Uvicorn</text>
+    <text x="382" y="126" text-anchor="middle" class="dsub">FastAPI app (app/main.py)</text>
+    <text x="382" y="144" text-anchor="middle" class="dsub">+ StaticFiles(frontend/)</text>
+    <text x="382" y="162" text-anchor="middle" class="dsub">listening on 127.0.0.1:8000</text>
+    <!-- db file -->
+    <rect x="280" y="220" width="205" height="60" rx="8" class="dbox"/>
+    <text x="382" y="246" text-anchor="middle" class="dtxt">«file» trades.db</text>
+    <text x="382" y="264" text-anchor="middle" class="dsub">SQLite on local disk</text>
+    <!-- venv -->
+    <rect x="55" y="290" width="190" height="60" rx="8" class="dbox"/>
+    <text x="150" y="316" text-anchor="middle" class="dtxt">«folder» .venv</text>
+    <text x="150" y="334" text-anchor="middle" class="dsub">project's own Python libs</text>
+    <!-- flows -->
+    <line x1="245" y1="115" x2="280" y2="115" class="dflow"/>
+    <text x="248" y="105" class="dsub">HTTP</text>
+    <line x1="382" y1="190" x2="382" y2="220" class="dflow"/>
+    <text x="394" y="210" class="dsub">file I/O</text>
+    <!-- GitHub node -->
+    <rect x="570" y="90" width="180" height="150" rx="14" class="node"/>
+    <text x="590" y="118" class="dlbl">«cloud» GitHub</text>
+    <rect x="590" y="136" width="140" height="80" rx="8" class="dbox"/>
+    <text x="660" y="164" text-anchor="middle" class="dtxt">trade-app repo</text>
+    <text x="660" y="182" text-anchor="middle" class="dsub">source code only</text>
+    <text x="660" y="198" text-anchor="middle" class="dsub">(no .venv, no .db)</text>
+    <line x1="245" y1="205" x2="590" y2="180" class="dflow"/>
+    <text x="380" y="215" class="dsub">git push / pull (HTTPS)</text>
+  </svg>
+  <figcaption>Development deployment: one machine runs everything; GitHub stores only the source. In production you would move the Uvicorn process and database to a server — the code would not need to change.</figcaption>
+  </figure>
+
+  <div class="tip"><b>Why the .gitignore matters here:</b> the deployment diagram makes it visual — <code>.venv</code> and <code>trades.db</code> live only on the device node, never in the GitHub node. Anyone cloning your repo rebuilds them with <code>python -m venv</code> and a first server start.</div>
+</section>
+
+<!-- ============ TAB 5: CODE WALKTHROUGH ============ -->
+<section class="tab" id="code">
+  <h2>Line-by-line code walkthrough</h2>
+  <p>Files are ordered the way a request travels — connection layer first, browser last. Backend concepts you already met in the Loan project are explained briefly; everything new gets the full treatment.</p>
+
+  <!-- database.py -->
+  <details>
+    <summary>1 · app/database.py — the connection layer (19 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>from sqlalchemy import create_engine</li>
+<li>from sqlalchemy.orm import sessionmaker, declarative_base</li>
+<li></li>
+<li>DATABASE_URL = "sqlite:///./trades.db"</li>
+<li></li>
+<li>engine = create_engine(</li>
+<li>    DATABASE_URL, connect_args={"check_same_thread": False}</li>
+<li>)</li>
+<li></li>
+<li>SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)</li>
+<li></li>
+<li>Base = declarative_base()</li>
+<li></li>
+<li>def get_db():</li>
+<li>    db = SessionLocal()</li>
+<li>    try:</li>
+<li>        yield db</li>
+<li>    finally:</li>
+<li>        db.close()</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–12</td><td>Identical to the Loan project except the filename on line 4 (<code>trades.db</code>). <code>engine</code> = the app-wide door to the database; <code>SessionLocal</code> = factory producing one short-lived session per request; <code>Base</code> = the registry models attach to; <code>autocommit=False</code> = nothing saves until <code>db.commit()</code>.</td></tr>
+      <tr><td>14–19</td><td><code>get_db()</code> opens a session, <code>yield</code>s it to the endpoint, and the <code>finally</code> guarantees it closes even if the endpoint raised an error. One extra reason this matters here: a trade modifies <i>two</i> tables (trades + the account's cash). Because both changes happen in the <b>same session</b> and one <code>commit()</code>, they succeed or fail together — you can never end up with cash deducted but no trade recorded.</td></tr>
+    </table></div>
+    </div>
+  </details>
+
+  <!-- models.py -->
+  <details>
+    <summary>2 · app/models.py — the two tables (30 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>from datetime import datetime</li>
+<li>from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey</li>
+<li>from sqlalchemy.orm import relationship</li>
+<li>from .database import Base</li>
+<li></li>
+<li>class Account(Base):</li>
+<li>    __tablename__ = "accounts"</li>
+<li></li>
+<li>    id = Column(Integer, primary_key=True, index=True)</li>
+<li>    owner_name = Column(String, nullable=False)</li>
+<li>    email = Column(String, unique=True, nullable=False, index=True)</li>
+<li>    cash_balance = Column(Float, default=100000.0)</li>
+<li>    created_at = Column(DateTime, default=datetime.utcnow)</li>
+<li></li>
+<li>    trades = relationship("Trade", back_populates="account",</li>
+<li>                          cascade="all, delete-orphan")</li>
+<li></li>
+<li>class Trade(Base):</li>
+<li>    __tablename__ = "trades"</li>
+<li></li>
+<li>    id = Column(Integer, primary_key=True, index=True)</li>
+<li>    account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)</li>
+<li>    symbol = Column(String, nullable=False, index=True)</li>
+<li>    side = Column(String, nullable=False)</li>
+<li>    quantity = Column(Integer, nullable=False)</li>
+<li>    price = Column(Float, nullable=False)</li>
+<li>    status = Column(String, default="EXECUTED")</li>
+<li>    created_at = Column(DateTime, default=datetime.utcnow)</li>
+<li></li>
+<li>    account = relationship("Account", back_populates="trades")</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–4</td><td>Same imports as before; the leading dot in <code>.database</code> means "from this same package".</td></tr>
+      <tr><td>6–13</td><td>The accounts table. Line 12 is the interesting one: <code>default=100000.0</code> means the <i>database</i> hands every new account its starting cash — no endpoint code needed, and no client can choose their own starting balance because <code>cash_balance</code> isn't in the AccountCreate schema at all.</td></tr>
+      <tr><td>15–16</td><td>One-to-many, account side: <code>account.trades</code> is a Python list of Trade objects. <code>cascade="all, delete-orphan"</code> = deleting an account deletes its trades.</td></tr>
+      <tr><td>18–28</td><td>The trades table. Line 22's <code>ForeignKey("accounts.id")</code> is the dashed line in the database diagram made real. Line 23 indexes <code>symbol</code> because the app filters by it (portfolio math, history filters) — indexes make those lookups fast. Line 27: trades are born <code>EXECUTED</code>; cancelling flips this to <code>CANCELLED</code> instead of deleting the row, so the audit trail survives (same soft-delete idea you met in the loan work).</td></tr>
+      <tr><td>30</td><td>The reverse direction: <code>trade.account</code> walks from any trade back to its owner.</td></tr>
+    </table></div>
+    </div>
+  </details>
+
+  <!-- schema.py -->
+  <details>
+    <summary>3 · app/schema.py — validation &amp; response shapes (54 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>from datetime import datetime</li>
+<li>from typing import List</li>
+<li>from pydantic import BaseModel, ConfigDict, computed_field</li>
+<li></li>
+<li>class AccountCreate(BaseModel):</li>
+<li>    owner_name: str</li>
+<li>    email: str</li>
+<li></li>
+<li>class TradeCreate(BaseModel):</li>
+<li>    account_id: int</li>
+<li>    symbol: str</li>
+<li>    side: str</li>
+<li>    quantity: int</li>
+<li>    price: float</li>
+<li></li>
+<li>class TradeResponse(BaseModel):</li>
+<li>    model_config = ConfigDict(from_attributes=True)</li>
+<li></li>
+<li>    id: int</li>
+<li>    account_id: int</li>
+<li>    symbol: str</li>
+<li>    side: str</li>
+<li>    quantity: int</li>
+<li>    price: float</li>
+<li>    status: str</li>
+<li>    created_at: datetime</li>
+<li></li>
+<li>    @computed_field</li>
+<li>    @property</li>
+<li>    def total_value(self) -&gt; float:</li>
+<li>        return round(self.quantity * self.price, 2)</li>
+<li></li>
+<li>class AccountResponse(BaseModel):</li>
+<li>    model_config = ConfigDict(from_attributes=True)</li>
+<li></li>
+<li>    id: int</li>
+<li>    owner_name: str</li>
+<li>    email: str</li>
+<li>    cash_balance: float</li>
+<li>    created_at: datetime</li>
+<li>    trades: List[TradeResponse] = []</li>
+<li></li>
+<li>class Holding(BaseModel):</li>
+<li>    symbol: str</li>
+<li>    net_quantity: int</li>
+<li>    average_buy_price: float</li>
+<li>    invested_amount: float</li>
+<li></li>
+<li>class PortfolioResponse(BaseModel):</li>
+<li>    account_id: int</li>
+<li>    cash_balance: float</li>
+<li>    holdings: List[Holding]</li>
+<li>    total_invested: float</li>
+<li>    total_value: float</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>5–7</td><td>Creating an account needs only a name and email — deliberately <i>not</i> cash_balance, so the $100,000 default in models.py can't be overridden by a client.</td></tr>
+      <tr><td>9–14</td><td>The shape of an incoming trade order. Pydantic guarantees the types: send <code>"quantity": "ten"</code> and FastAPI answers 422 before your code runs. Whether it's a <i>legal</i> trade (enough cash, valid side) is business logic and lives in main.py — types vs rules is a separation worth noticing.</td></tr>
+      <tr><td>16–31</td><td>The outgoing trade. <code>from_attributes=True</code> lets Pydantic read straight off SQLAlchemy objects. Lines 28–31: <code>total_value</code> is computed at response time (quantity × price) — never stored, so it can never disagree with the stored fields.</td></tr>
+      <tr><td>33–41</td><td>Account response includes the full nested trade list via the ORM relationship — one GET returns the account and everything it ever did.</td></tr>
+      <tr><td>43–47</td><td><code>Holding</code> is a pure output shape with no matching table — proof that schemas and tables are independent ideas. Holdings exist only as math over trades.</td></tr>
+      <tr><td>49–54</td><td>The portfolio bundle: cash + the holdings list + two totals. main.py fills this in; the schema just guarantees its shape (and documents it automatically in /docs).</td></tr>
+    </table></div>
+    </div>
+  </details>
+
+  <!-- main.py -->
+  <details>
+    <summary>4 · app/main.py — routes, business rules, portfolio math (152 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>from typing import Optional, List</li>
+<li>from fastapi import FastAPI, Depends, HTTPException</li>
+<li>from fastapi.staticfiles import StaticFiles</li>
+<li>from sqlalchemy.orm import Session</li>
+<li></li>
+<li>from .database import Base, engine, get_db</li>
+<li>from . import models, schema</li>
+<li></li>
+<li>Base.metadata.create_all(bind=engine)</li>
+<li></li>
+<li>app = FastAPI(title="Trade Station API")</li>
+<li></li>
+<li># ---------- helpers ----------</li>
+<li></li>
+<li>def get_account_or_404(db: Session, account_id: int):</li>
+<li>    account = db.get(models.Account, account_id)</li>
+<li>    if not account:</li>
+<li>        raise HTTPException(status_code=404, detail="Account not found")</li>
+<li>    return account</li>
+<li></li>
+<li>def net_shares(db: Session, account_id: int, symbol: str) -&gt; int:</li>
+<li>    trades = db.query(models.Trade).filter(</li>
+<li>        models.Trade.account_id == account_id,</li>
+<li>        models.Trade.symbol == symbol,</li>
+<li>        models.Trade.status == "EXECUTED").all()</li>
+<li>    total = 0</li>
+<li>    for t in trades:</li>
+<li>        total += t.quantity if t.side == "BUY" else -t.quantity</li>
+<li>    return total</li>
+<li></li>
+<li># ---------- account endpoints ----------</li>
+<li></li>
+<li>@app.post("/api/accounts", response_model=schema.AccountResponse, status_code=201)</li>
+<li>def create_account(payload: schema.AccountCreate, db: Session = Depends(get_db)):</li>
+<li>    if db.query(models.Account).filter(</li>
+<li>            models.Account.email == payload.email).first():</li>
+<li>        raise HTTPException(status_code=400, detail="Email already registered")</li>
+<li>    account = models.Account(**payload.model_dump())</li>
+<li>    db.add(account)</li>
+<li>    db.commit()</li>
+<li>    db.refresh(account)</li>
+<li>    return account</li>
+<li></li>
+<li>@app.get("/api/accounts", response_model=List[schema.AccountResponse])</li>
+<li>def list_accounts(db: Session = Depends(get_db)):</li>
+<li>    return db.query(models.Account).all()</li>
+<li></li>
+<li>@app.get("/api/accounts/{account_id}", response_model=schema.AccountResponse)</li>
+<li>def get_account(account_id: int, db: Session = Depends(get_db)):</li>
+<li>    return get_account_or_404(db, account_id)</li>
+<li></li>
+<li>@app.delete("/api/accounts/{account_id}", status_code=204)</li>
+<li>def delete_account(account_id: int, db: Session = Depends(get_db)):</li>
+<li>    account = get_account_or_404(db, account_id)</li>
+<li>    db.delete(account)</li>
+<li>    db.commit()</li>
+<li></li>
+<li># ---------- trade endpoints ----------</li>
+<li></li>
+<li>@app.post("/api/trades", response_model=schema.TradeResponse, status_code=201)</li>
+<li>def place_trade(payload: schema.TradeCreate, db: Session = Depends(get_db)):</li>
+<li>    account = get_account_or_404(db, payload.account_id)</li>
+<li>    side = payload.side.upper()</li>
+<li>    symbol = payload.symbol.upper()</li>
+<li>    if side not in ("BUY", "SELL"):</li>
+<li>        raise HTTPException(status_code=400, detail="Side must be BUY or SELL")</li>
+<li>    if payload.quantity &lt;= 0 or payload.price &lt;= 0:</li>
+<li>        raise HTTPException(status_code=400,</li>
+<li>                            detail="Quantity and price must be positive")</li>
+<li>    total = payload.quantity * payload.price</li>
+<li>    if side == "BUY":</li>
+<li>        if total &gt; account.cash_balance:</li>
+<li>            raise HTTPException(status_code=400, detail="Insufficient funds")</li>
+<li>        account.cash_balance -= total</li>
+<li>    else:</li>
+<li>        if net_shares(db, account.id, symbol) &lt; payload.quantity:</li>
+<li>            raise HTTPException(status_code=400, detail="Insufficient shares")</li>
+<li>        account.cash_balance += total</li>
+<li>    trade = models.Trade(account_id=account.id, symbol=symbol, side=side,</li>
+<li>                         quantity=payload.quantity, price=payload.price)</li>
+<li>    db.add(trade)</li>
+<li>    db.commit()</li>
+<li>    db.refresh(trade)</li>
+<li>    return trade</li>
+<li></li>
+<li>@app.get("/api/trades", response_model=List[schema.TradeResponse])</li>
+<li>def list_trades(account_id: Optional[int] = None, symbol: Optional[str] = None,</li>
+<li>                side: Optional[str] = None, db: Session = Depends(get_db)):</li>
+<li>    query = db.query(models.Trade)</li>
+<li>    if account_id:</li>
+<li>        query = query.filter(models.Trade.account_id == account_id)</li>
+<li>    if symbol:</li>
+<li>        query = query.filter(models.Trade.symbol == symbol.upper())</li>
+<li>    if side:</li>
+<li>        query = query.filter(models.Trade.side == side.upper())</li>
+<li>    return query.all()</li>
+<li></li>
+<li>@app.put("/api/trades/{trade_id}/cancel", response_model=schema.TradeResponse)</li>
+<li>def cancel_trade(trade_id: int, db: Session = Depends(get_db)):</li>
+<li>    trade = db.get(models.Trade, trade_id)</li>
+<li>    if not trade:</li>
+<li>        raise HTTPException(status_code=404, detail="Trade not found")</li>
+<li>    if trade.status == "CANCELLED":</li>
+<li>        raise HTTPException(status_code=400, detail="Trade already cancelled")</li>
+<li>    account = db.get(models.Account, trade.account_id)</li>
+<li>    total = trade.quantity * trade.price</li>
+<li>    if trade.side == "BUY":</li>
+<li>        account.cash_balance += total</li>
+<li>    else:</li>
+<li>        account.cash_balance -= total</li>
+<li>    trade.status = "CANCELLED"</li>
+<li>    db.commit()</li>
+<li>    db.refresh(trade)</li>
+<li>    return trade</li>
+<li></li>
+<li># ---------- portfolio ----------</li>
+<li></li>
+<li>@app.get("/api/accounts/{account_id}/portfolio",</li>
+<li>         response_model=schema.PortfolioResponse)</li>
+<li>def portfolio(account_id: int, db: Session = Depends(get_db)):</li>
+<li>    account = get_account_or_404(db, account_id)</li>
+<li>    buckets = {}</li>
+<li>    for t in account.trades:</li>
+<li>        if t.status != "EXECUTED":</li>
+<li>            continue</li>
+<li>        b = buckets.setdefault(t.symbol,</li>
+<li>                               {"bought_qty": 0, "bought_cost": 0.0, "sold_qty": 0})</li>
+<li>        if t.side == "BUY":</li>
+<li>            b["bought_qty"] += t.quantity</li>
+<li>            b["bought_cost"] += t.quantity * t.price</li>
+<li>        else:</li>
+<li>            b["sold_qty"] += t.quantity</li>
+<li>    holdings = []</li>
+<li>    for symbol, b in sorted(buckets.items()):</li>
+<li>        net = b["bought_qty"] - b["sold_qty"]</li>
+<li>        if net &lt;= 0:</li>
+<li>            continue</li>
+<li>        avg = b["bought_cost"] / b["bought_qty"]</li>
+<li>        holdings.append(schema.Holding(</li>
+<li>            symbol=symbol, net_quantity=net,</li>
+<li>            average_buy_price=round(avg, 2),</li>
+<li>            invested_amount=round(net * avg, 2)))</li>
+<li>    invested = sum(h.invested_amount for h in holdings)</li>
+<li>    return schema.PortfolioResponse(</li>
+<li>        account_id=account.id,</li>
+<li>        cash_balance=round(account.cash_balance, 2),</li>
+<li>        holdings=holdings,</li>
+<li>        total_invested=round(invested, 2),</li>
+<li>        total_value=round(account.cash_balance + invested, 2))</li>
+<li></li>
+<li># ---------- frontend (must be mounted LAST) ----------</li>
+<li>app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–11</td><td>Familiar setup plus one newcomer: <code>StaticFiles</code> (line 3) — FastAPI's built-in file server for the frontend. Line 9 creates both tables on startup; line 11 is the app object Uvicorn serves.</td></tr>
+      <tr><td>15–19</td><td>First helper. Three endpoints need "fetch account or 404", so it's written once. When you see yourself copy-pasting the same 4 lines, that's the signal to extract a helper.</td></tr>
+      <tr><td>21–29</td><td>Second helper: how many shares of one symbol does an account really hold? Fetch its EXECUTED trades for that symbol (22–25), then add BUY quantities and subtract SELL quantities (26–28). There is no "shares" column anywhere — position is always derived from trade history.</td></tr>
+      <tr><td>33–42</td><td>Create account: duplicate-email guard (35–37) then the familiar <b>add → commit → refresh</b> trio (39–41). The $100,000 comes from the model default — this function never mentions it.</td></tr>
+      <tr><td>44–56</td><td>List, get-one (via the helper, so it's a one-liner on line 50), and delete. Delete cascades to the account's trades thanks to models.py.</td></tr>
+      <tr><td>60–69</td><td><b>The heart of the app begins.</b> Fetch the account (62), normalize input so "aapl"/"buy" work (63–64), then two rule gates: valid side (65–66) and positive numbers (67–69).</td></tr>
+      <tr><td>70–78</td><td>The money movement. Line 70 computes the cash impact once. BUY branch (71–74): reject if it costs more than the cash on hand, otherwise subtract. SELL branch (75–78): reject if the account doesn't hold enough shares (using net_shares), otherwise add the proceeds. Notice the account object is modified in plain Python — SQLAlchemy tracks the change automatically.</td></tr>
+      <tr><td>79–84</td><td>Record the trade and commit. This is the key moment: the cash change (74 or 78) and the new trade row (81) are saved by the <b>same commit on line 82</b> — one atomic unit. If anything failed before this line, neither change was saved.</td></tr>
+      <tr><td>86–96</td><td>Trade listing with three optional query-string filters, chained onto the query only when provided — e.g. <code>/api/trades?account_id=1&amp;side=BUY</code>. The frontend uses the account_id filter for the history table.</td></tr>
+      <tr><td>98–114</td><td>Cancel = the reverse of placing. Guard against double-cancel (103–104, otherwise cash would be refunded twice!), reverse the cash effect (106–110: cancelled BUY refunds money, cancelled SELL takes the proceeds back), and flip status instead of deleting (111) — the row remains as history.</td></tr>
+      <tr><td>118–132</td><td>Portfolio, phase 1 — gather: walk the account's executed trades and bucket them per symbol (<code>setdefault</code> creates a bucket on first sight of a symbol), accumulating bought quantity, bought cost, and sold quantity.</td></tr>
+      <tr><td>133–143</td><td>Phase 2 — compute: net position (135), skip fully-sold symbols (136–137), average buy price = total cost ÷ total bought (138), then build Holding objects and sum the invested amounts.</td></tr>
+      <tr><td>144–149</td><td>Phase 3 — assemble the PortfolioResponse: cash + holdings + totals, with total_value = cash plus invested. Pure calculation, no writes — GET endpoints should never change data.</td></tr>
+      <tr><td>151–152</td><td>The frontend mount, deliberately <b>last</b>: routes are matched in order, so /api/* and /docs are claimed first and StaticFiles catches the rest. <code>html=True</code> makes "/" serve index.html. Put this line first and it would swallow every request — a classic beginner trap.</td></tr>
+    </table></div>
+    <div class="tip"><b>Pattern upgrade from the Loan project:</b> Loan endpoints wrote to one table. <code>place_trade</code> and <code>cancel_trade</code> write to two (trades + accounts) under a single commit — your first real <i>transaction</i>. That idea scales all the way up to real banking systems.</div>
+    </div>
+  </details>
+
+  <!-- index.html -->
+  <details>
+    <summary>5 · frontend/index.html — the page structure (55 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>&lt;!DOCTYPE html&gt;</li>
+<li>&lt;html lang="en"&gt;</li>
+<li>&lt;head&gt;</li>
+<li>  &lt;meta charset="UTF-8"&gt;</li>
+<li>  &lt;title&gt;Trade Station&lt;/title&gt;</li>
+<li>  &lt;link rel="stylesheet" href="style.css"&gt;</li>
+<li>&lt;/head&gt;</li>
+<li>&lt;body&gt;</li>
+<li>  &lt;header&gt;</li>
+<li>    &lt;h1&gt;Trade Station&lt;/h1&gt;</li>
+<li>    &lt;div id="account-bar"&gt;</li>
+<li>      &lt;select id="account-select"&gt;&lt;/select&gt;</li>
+<li>      &lt;input id="new-name" placeholder="Owner name"&gt;</li>
+<li>      &lt;input id="new-email" placeholder="Email"&gt;</li>
+<li>      &lt;button id="btn-new-account"&gt;New account&lt;/button&gt;</li>
+<li>    &lt;/div&gt;</li>
+<li>  &lt;/header&gt;</li>
+<li></li>
+<li>  &lt;div id="banner" class="hidden"&gt;&lt;/div&gt;</li>
+<li></li>
+<li>  &lt;section class="cards"&gt;</li>
+<li>    &lt;div class="card"&gt;&lt;h3&gt;Cash Balance&lt;/h3&gt;&lt;p id="cash"&gt;–&lt;/p&gt;&lt;/div&gt;</li>
+<li>    &lt;div class="card"&gt;&lt;h3&gt;Total Invested&lt;/h3&gt;&lt;p id="invested"&gt;–&lt;/p&gt;&lt;/div&gt;</li>
+<li>    &lt;div class="card"&gt;&lt;h3&gt;Trades&lt;/h3&gt;&lt;p id="trade-count"&gt;–&lt;/p&gt;&lt;/div&gt;</li>
+<li>  &lt;/section&gt;</li>
+<li></li>
+<li>  &lt;section class="panel"&gt;</li>
+<li>    &lt;h2&gt;Place Trade&lt;/h2&gt;</li>
+<li>    &lt;input id="symbol" placeholder="Symbol e.g. AAPL"&gt;</li>
+<li>    &lt;select id="side"&gt;&lt;option&gt;BUY&lt;/option&gt;&lt;option&gt;SELL&lt;/option&gt;&lt;/select&gt;</li>
+<li>    &lt;input id="quantity" type="number" placeholder="Quantity"&gt;</li>
+<li>    &lt;input id="price" type="number" step="0.01" placeholder="Price"&gt;</li>
+<li>    &lt;button id="btn-trade"&gt;Place Trade&lt;/button&gt;</li>
+<li>  &lt;/section&gt;</li>
+<li></li>
+<li>  &lt;section class="panel"&gt;</li>
+<li>    &lt;h2&gt;Portfolio&lt;/h2&gt;</li>
+<li>    &lt;table&gt;</li>
+<li>      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Net Qty&lt;/th&gt;&lt;th&gt;Avg Buy&lt;/th&gt;&lt;th&gt;Invested&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</li>
+<li>      &lt;tbody id="portfolio-body"&gt;&lt;/tbody&gt;</li>
+<li>    &lt;/table&gt;</li>
+<li>  &lt;/section&gt;</li>
+<li></li>
+<li>  &lt;section class="panel"&gt;</li>
+<li>    &lt;h2&gt;Trade History&lt;/h2&gt;</li>
+<li>    &lt;table&gt;</li>
+<li>      &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Symbol&lt;/th&gt;&lt;th&gt;Side&lt;/th&gt;&lt;th&gt;Qty&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;</li>
+<li>        &lt;th&gt;Total&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</li>
+<li>      &lt;tbody id="history-body"&gt;&lt;/tbody&gt;</li>
+<li>    &lt;/table&gt;</li>
+<li>  &lt;/section&gt;</li>
+<li></li>
+<li>  &lt;script src="script.js"&gt;&lt;/script&gt;</li>
+<li>&lt;/body&gt;</li>
+<li>&lt;/html&gt;</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–7</td><td>Standard page skeleton; line 6 pulls in the stylesheet. Because StaticFiles serves this whole folder, the relative path "style.css" just works.</td></tr>
+      <tr><td>9–17</td><td>The header holds the <b>account picker</b> (an empty <code>&lt;select&gt;</code> that JavaScript will fill from the API) and a tiny new-account form. Notice everything interactive has an <code>id</code> — those ids are the contract between HTML and script.js.</td></tr>
+      <tr><td>19</td><td>The message banner. It starts with class "hidden"; script.js switches the class to "ok" (green) or "error" (red) — this is where "Insufficient funds" appears.</td></tr>
+      <tr><td>21–25</td><td>The three summary cards. The dash placeholders are replaced by real numbers on the first refresh.</td></tr>
+      <tr><td>27–34</td><td>The trade ticket: symbol, side, quantity, price, button. <code>type="number"</code> gives numeric keyboards on mobile and blocks letters; the real validation still happens server-side.</td></tr>
+      <tr><td>36–51</td><td>Two tables with empty <code>&lt;tbody&gt;</code> elements — script.js injects the rows. The empty <code>&lt;th&gt;</code> on line 48 is the column for Cancel buttons.</td></tr>
+      <tr><td>53</td><td>The script tag is <i>last</i>, so by the time script.js runs, every element it looks up already exists. Put it in &lt;head&gt; and every <code>$(...)</code> lookup would find nothing — a very common first-frontend bug.</td></tr>
+    </table></div>
+    </div>
+  </details>
+
+  <!-- script.js -->
+  <details>
+    <summary>6 · frontend/script.js — the page's brain (100 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>// Tiny helper: shorthand for document.getElementById</li>
+<li>const $ = (id) =&gt; document.getElementById(id);</li>
+<li></li>
+<li>// One reusable function for every API call</li>
+<li>async function api(method, path, body) {</li>
+<li>  const resp = await fetch(path, {</li>
+<li>    method: method,</li>
+<li>    headers: { "Content-Type": "application/json" },</li>
+<li>    body: body ? JSON.stringify(body) : undefined,</li>
+<li>  });</li>
+<li>  const data = resp.status === 204 ? null : await resp.json();</li>
+<li>  if (!resp.ok) throw new Error(data.detail || "Request failed");</li>
+<li>  return data;</li>
+<li>}</li>
+<li></li>
+<li>// Show a message bar: green for success, red for errors</li>
+<li>function banner(message, ok) {</li>
+<li>  const el = $("banner");</li>
+<li>  el.textContent = message;</li>
+<li>  el.className = ok ? "ok" : "error";</li>
+<li>  setTimeout(() =&gt; (el.className = "hidden"), 4000);</li>
+<li>}</li>
+<li></li>
+<li>function currentAccountId() {</li>
+<li>  return Number($("account-select").value);</li>
+<li>}</li>
+<li></li>
+<li>// Fill the account dropdown from the API</li>
+<li>async function loadAccounts() {</li>
+<li>  const accounts = await api("GET", "/api/accounts");</li>
+<li>  const select = $("account-select");</li>
+<li>  select.innerHTML = "";</li>
+<li>  for (const a of accounts) {</li>
+<li>    const opt = document.createElement("option");</li>
+<li>    opt.value = a.id;</li>
+<li>    opt.textContent = "#" + a.id + " " + a.owner_name;</li>
+<li>    select.appendChild(opt);</li>
+<li>  }</li>
+<li>  if (accounts.length) await refresh();</li>
+<li>}</li>
+<li></li>
+<li>// Re-fetch cards, portfolio, and history for the selected account</li>
+<li>async function refresh() {</li>
+<li>  const id = currentAccountId();</li>
+<li>  if (!id) return;</li>
+<li>  const p = await api("GET", "/api/accounts/" + id + "/portfolio");</li>
+<li>  $("cash").textContent = "$" + p.cash_balance.toLocaleString();</li>
+<li>  $("invested").textContent = "$" + p.total_invested.toLocaleString();</li>
+<li>  $("portfolio-body").innerHTML = p.holdings.map(h =&gt;</li>
+<li>    "&lt;tr&gt;&lt;td&gt;" + h.symbol + "&lt;/td&gt;&lt;td&gt;" + h.net_quantity + "&lt;/td&gt;&lt;td&gt;" +</li>
+<li>    h.average_buy_price.toFixed(2) + "&lt;/td&gt;&lt;td&gt;" +</li>
+<li>    h.invested_amount.toFixed(2) + "&lt;/td&gt;&lt;/tr&gt;").join("") ||</li>
+<li>    "&lt;tr&gt;&lt;td colspan='4'&gt;No holdings yet&lt;/td&gt;&lt;/tr&gt;";</li>
+<li></li>
+<li>  const trades = await api("GET", "/api/trades?account_id=" + id);</li>
+<li>  $("trade-count").textContent = trades.length;</li>
+<li>  $("history-body").innerHTML = trades.slice().reverse().map(t =&gt;</li>
+<li>    "&lt;tr&gt;&lt;td&gt;" + t.symbol + "&lt;/td&gt;" +</li>
+<li>    "&lt;td class='" + t.side.toLowerCase() + "'&gt;" + t.side + "&lt;/td&gt;" +</li>
+<li>    "&lt;td&gt;" + t.quantity + "&lt;/td&gt;&lt;td&gt;" + t.price.toFixed(2) + "&lt;/td&gt;" +</li>
+<li>    "&lt;td&gt;" + t.total_value.toFixed(2) + "&lt;/td&gt;&lt;td&gt;" + t.status + "&lt;/td&gt;" +</li>
+<li>    "&lt;td&gt;" + (t.status === "EXECUTED"</li>
+<li>      ? "&lt;button onclick='cancelTrade(" + t.id + ")'&gt;Cancel&lt;/button&gt;" : "") +</li>
+<li>    "&lt;/td&gt;&lt;/tr&gt;").join("");</li>
+<li>}</li>
+<li></li>
+<li>async function cancelTrade(id) {</li>
+<li>  try {</li>
+<li>    await api("PUT", "/api/trades/" + id + "/cancel");</li>
+<li>    banner("Trade cancelled and cash reversed", true);</li>
+<li>    await refresh();</li>
+<li>  } catch (err) { banner(err.message, false); }</li>
+<li>}</li>
+<li></li>
+<li>$("btn-new-account").onclick = async () =&gt; {</li>
+<li>  try {</li>
+<li>    await api("POST", "/api/accounts",</li>
+<li>      { owner_name: $("new-name").value, email: $("new-email").value });</li>
+<li>    banner("Account created with $100,000 virtual cash", true);</li>
+<li>    await loadAccounts();</li>
+<li>  } catch (err) { banner(err.message, false); }</li>
+<li>};</li>
+<li></li>
+<li>$("btn-trade").onclick = async () =&gt; {</li>
+<li>  try {</li>
+<li>    await api("POST", "/api/trades", {</li>
+<li>      account_id: currentAccountId(),</li>
+<li>      symbol: $("symbol").value,</li>
+<li>      side: $("side").value,</li>
+<li>      quantity: Number($("quantity").value),</li>
+<li>      price: Number($("price").value),</li>
+<li>    });</li>
+<li>    banner("Trade executed", true);</li>
+<li>    await refresh();</li>
+<li>  } catch (err) { banner(err.message, false); }</li>
+<li>};</li>
+<li></li>
+<li>// Wire the dropdown and load everything on page open</li>
+<li>$("account-select").onchange = refresh;</li>
+<li>loadAccounts();</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–2</td><td><code>$("cash")</code> is just a short way to write <code>document.getElementById("cash")</code> — grabbing a page element by its id.</td></tr>
+      <tr><td>4–14</td><td>The JavaScript twin of demo.py's <code>call()</code> helper. <code>fetch()</code> sends the HTTP request; <code>await</code> pauses until the reply arrives without freezing the page. Line 9: only attach a body if there is one, converted to JSON text. Line 11: DELETE replies (204) have no body to parse. Line 12 is the crucial trick — if the server said 4xx, <code>throw</code> the server's own <code>detail</code> message, so "Insufficient funds" travels from main.py line 73 all the way to the red banner.</td></tr>
+      <tr><td>16–22</td><td>The banner: set the text, switch the CSS class (green/red), and auto-hide after 4 seconds. All the styling lives in style.css; JS only flips class names.</td></tr>
+      <tr><td>24–26</td><td>Reads which account is selected in the dropdown, converted from string to number.</td></tr>
+      <tr><td>28–40</td><td>Fill the dropdown: GET the accounts, clear old options (32), create one <code>&lt;option&gt;</code> per account (33–38) where <code>value</code> holds the id the API needs and the visible text holds the name, then trigger the first refresh.</td></tr>
+      <tr><td>42–53</td><td>Refresh, part 1 — portfolio: one GET fills the two money cards (47–48), then <code>.map()</code> turns each holding into a <code>&lt;tr&gt;</code> string, joined and injected into the table body (49–52). Line 53: if there are no holdings the <code>||</code> falls back to a friendly empty-state row.</td></tr>
+      <tr><td>55–65</td><td>Refresh, part 2 — history: fetch this account's trades using the query filter, newest first (<code>slice().reverse()</code> copies before reversing). Line 59 sets class "buy" or "sell" for the green/red coloring; lines 62–63 add a Cancel button only on EXECUTED trades, embedding the trade id into the onclick call.</td></tr>
+      <tr><td>67–73</td><td>Cancel: call the endpoint, announce it, refresh. The <code>try/catch</code> around every action is the frontend's version of Python's try/except — errors become banners instead of a broken page.</td></tr>
+      <tr><td>75–96</td><td>The two button handlers. Same rhythm every time: gather values from inputs → api() → banner → refresh. Note line 90–91: input values are always strings, so <code>Number()</code> converts them before sending — otherwise Pydantic would receive "10" instead of 10.</td></tr>
+      <tr><td>98–100</td><td>Startup wiring: switching accounts re-refreshes, and <code>loadAccounts()</code> kicks everything off the moment the page loads.</td></tr>
+    </table></div>
+    <div class="tip"><b>The unifying insight:</b> lines 5–14 do in JavaScript exactly what demo.py's <code>call()</code> does in Python — build request, send, parse JSON, surface errors. Learn one, and you've learned the other.</div>
+    </div>
+  </details>
+
+  <!-- style.css -->
+  <details>
+    <summary>7 · frontend/style.css — the look (summary)</summary>
+    <div class="inner">
+    <p>CSS doesn't run line by line — it's a list of rules the browser applies wherever they match — so a section map is more useful than line numbers:</p>
+    <div class="tablewrap"><table>
+      <tr><th>Section</th><th>What it does</th></tr>
+      <tr><td>Page basics</td><td>Light background, a readable system font, and a centered max-width so the layout doesn't stretch on wide screens.</td></tr>
+      <tr><td><code>.cards</code> row</td><td>Displays the three summary boxes side by side (flexbox), each a white rounded card with a subtle border.</td></tr>
+      <tr><td><code>.panel</code></td><td>The white container used by the trade form, portfolio, and history sections.</td></tr>
+      <tr><td><code>td.buy</code> / <code>td.sell</code></td><td>Green text for BUY, red for SELL — the classes script.js assigns on line 59. One CSS rule, and every current and future row is colored correctly.</td></tr>
+      <tr><td><code>#banner.ok / .error / .hidden</code></td><td>The three states of the message bar: green background, red background, or not displayed. JavaScript only changes the class name; CSS decides what each state looks like — a clean division of labor.</td></tr>
+      <tr><td>Table styles</td><td>Collapsed borders, padded cells, striped rows — the same treatment for both tables.</td></tr>
+    </table></div>
+    </div>
+  </details>
+
+  <!-- demo.py -->
+  <details>
+    <summary>8 · demo.py — the scripted auditor (50 lines)</summary>
+    <div class="inner">
+    <ol class="code">
+<li>import json</li>
+<li>import urllib.error</li>
+<li>import urllib.request</li>
+<li></li>
+<li>BASE = "http://127.0.0.1:8000"</li>
+<li></li>
+<li>def call(method, path, body=None):</li>
+<li>    data = json.dumps(body).encode() if body else None</li>
+<li>    req = urllib.request.Request(BASE + path, data=data, method=method,</li>
+<li>                                 headers={"Content-Type": "application/json"})</li>
+<li>    try:</li>
+<li>        with urllib.request.urlopen(req) as resp:</li>
+<li>            text = resp.read().decode()</li>
+<li>            return json.loads(text) if text else None</li>
+<li>    except urllib.error.HTTPError as err:</li>
+<li>        detail = json.loads(err.read().decode()).get("detail", "error")</li>
+<li>        print(f"   -&gt; rejected ({err.code}): {detail}")</li>
+<li>        return None</li>
+<li></li>
+<li>print("Step 1: creating 2 accounts...")</li>
+<li>asha = call("POST", "/api/accounts", {"owner_name": "Asha Rao", "email": "asha@example.com"})</li>
+<li>ben = call("POST", "/api/accounts", {"owner_name": "Ben Ortiz", "email": "ben@example.com"})</li>
+<li></li>
+<li>print("Step 2: placing 6 trades...")</li>
+<li>trades = [</li>
+<li>    (asha, "AAPL", "BUY", 100, 150.0),</li>
+<li>    (asha, "MSFT", "BUY", 50, 300.0),</li>
+<li>    (asha, "AAPL", "SELL", 40, 165.0),</li>
+<li>    (ben, "TSLA", "BUY", 30, 220.0),</li>
+<li>    (ben, "AAPL", "BUY", 20, 155.0),</li>
+<li>    (ben, "TSLA", "SELL", 10, 240.0),</li>
+<li>]</li>
+<li>for account, symbol, side, qty, price in trades:</li>
+<li>    call("POST", "/api/trades", {"account_id": account["id"], "symbol": symbol,</li>
+<li>                                 "side": side, "quantity": qty, "price": price})</li>
+<li></li>
+<li>print("Step 3: breaking the rules on purpose...")</li>
+<li>call("POST", "/api/trades", {"account_id": asha["id"], "symbol": "BRK",</li>
+<li>                             "side": "BUY", "quantity": 10000, "price": 500.0})</li>
+<li>call("POST", "/api/trades", {"account_id": ben["id"], "symbol": "MSFT",</li>
+<li>                             "side": "SELL", "quantity": 5, "price": 310.0})</li>
+<li></li>
+<li>print("\nStep 4: portfolios...")</li>
+<li>for account in (asha, ben):</li>
+<li>    p = call("GET", f"/api/accounts/{account['id']}/portfolio")</li>
+<li>    print(f"\n{account['owner_name']}: cash ${p['cash_balance']:,.2f}")</li>
+<li>    for h in p["holdings"]:</li>
+<li>        print(f"   {h['symbol']:&lt;6} qty={h['net_quantity']:&lt;5}"</li>
+<li>              f" avg={h['average_buy_price']:&lt;8} invested=${h['invested_amount']:,.2f}")</li>
+<li>    print(f"   total value: ${p['total_value']:,.2f}")</li>
+    </ol>
+    <div class="tablewrap"><table>
+      <tr><th>Line</th><th>Explanation</th></tr>
+      <tr><td>1–5</td><td>Standard library only; <code>urllib.error</code> is new — needed to catch the API's rejections gracefully.</td></tr>
+      <tr><td>7–18</td><td>The upgraded <code>call()</code> helper. Lines 8–14 are the same as the Loan demo. New: lines 15–18 catch HTTP errors, dig the API's <code>detail</code> message out of the error body, and <i>print</i> it instead of crashing — because this script deliberately triggers errors.</td></tr>
+      <tr><td>20–22</td><td>Two accounts; the returned dicts (with server-assigned ids) are kept for later.</td></tr>
+      <tr><td>24–35</td><td>Six legal trades. Note trade 3: Asha SELLs 40 AAPL <i>after</i> buying 100 — a legitimate sell that passes the net_shares check. Tuples + loop keep it readable.</td></tr>
+      <tr><td>37–41</td><td>The rule-breaking section. A $5,000,000 BUY (10,000 × $500) against ~$70k of remaining cash → "Insufficient funds". A SELL of MSFT that Ben never bought → "Insufficient shares". Watching your own rules reject bad input is the most satisfying part of the run.</td></tr>
+      <tr><td>43–50</td><td>Print each portfolio: cash, then each holding aligned into columns with f-string format specs, then total value. Compare these numbers with the web page — same API, so they must match.</td></tr>
+    </table></div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ TAB 6: SEQUENCE DIAGRAM ============ -->
+<section class="tab" id="seq">
+  <h2>Sequence diagram — use case: placing a BUY trade from the web page</h2>
+  <p>The full journey when you fill the trade form and click <i>Place Trade</i>. Time flows downward; dashed amber arrows are responses.</p>
+
+  <figure>
+  <svg viewBox="0 0 780 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sequence diagram for placing a BUY trade" style="min-width:680px;width:100%;height:auto">
+    <defs>
+      <marker id="sq" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L8,4.5 L0,9 z" fill="#134E7C"/></marker>
+      <marker id="sqr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L8,4.5 L0,9 z" fill="#8A5A13"/></marker>
+    </defs>
+    <style>
+      .actor{fill:#E4EEF6;stroke:#134E7C;stroke-width:1.5}
+      .aname{font:600 11.5px Consolas,monospace;fill:#1C2530}
+      .life{stroke:#B9C6D2;stroke-width:1.2;stroke-dasharray:5 4}
+      .msg{stroke:#134E7C;stroke-width:1.6;marker-end:url(#sq)}
+      .ret{stroke:#8A5A13;stroke-width:1.4;stroke-dasharray:6 3;marker-end:url(#sqr)}
+      .mtxt{font:11px Consolas,monospace;fill:#1C2530}
+      .rtxt{font:11px Consolas,monospace;fill:#8A5A13}
+      .num{font:700 10px Consolas,monospace;fill:#fff}
+      .note{fill:#FBF3E4;stroke:#8A5A13}
+    </style>
+
+    <g>
+      <rect x="14"  y="16" width="96" height="40" rx="8" class="actor"/><text x="62"  y="41" text-anchor="middle" class="aname">User</text>
+      <rect x="128" y="16" width="110" height="40" rx="8" class="actor"/><text x="183" y="41" text-anchor="middle" class="aname">script.js</text>
+      <rect x="262" y="16" width="120" height="40" rx="8" class="actor"/><text x="322" y="41" text-anchor="middle" class="aname">place_trade()</text>
+      <rect x="406" y="16" width="110" height="40" rx="8" class="actor"/><text x="461" y="41" text-anchor="middle" class="aname">schema.py</text>
+      <rect x="540" y="16" width="110" height="40" rx="8" class="actor"/><text x="595" y="41" text-anchor="middle" class="aname">DB session</text>
+      <rect x="668" y="16" width="98" height="40" rx="8" class="actor"/><text x="717" y="41" text-anchor="middle" class="aname">Account row</text>
+    </g>
+    <line x1="62"  y1="56" x2="62"  y2="730" class="life"/>
+    <line x1="183" y1="56" x2="183" y2="730" class="life"/>
+    <line x1="322" y1="56" x2="322" y2="730" class="life"/>
+    <line x1="461" y1="56" x2="461" y2="730" class="life"/>
+    <line x1="595" y1="56" x2="595" y2="730" class="life"/>
+    <line x1="717" y1="56" x2="717" y2="730" class="life"/>
+
+    <line x1="62" y1="88" x2="183" y2="88" class="msg"/>
+    <circle cx="75" cy="80" r="8" fill="#134E7C"/><text x="75" y="83" text-anchor="middle" class="num">1</text>
+    <text x="88" y="76" class="mtxt">clicks Place Trade</text>
+
+    <line x1="183" y1="126" x2="322" y2="126" class="msg"/>
+    <circle cx="196" cy="118" r="8" fill="#134E7C"/><text x="196" y="121" text-anchor="middle" class="num">2</text>
+    <text x="208" y="114" class="mtxt">fetch POST /api/trades {JSON}</text>
+
+    <line x1="322" y1="164" x2="461" y2="164" class="msg"/>
+    <circle cx="335" cy="156" r="8" fill="#134E7C"/><text x="335" y="159" text-anchor="middle" class="num">3</text>
+    <text x="347" y="152" class="mtxt">validate as TradeCreate</text>
+
+    <line x1="461" y1="200" x2="322" y2="200" class="ret"/>
+    <circle cx="448" cy="192" r="8" fill="#8A5A13"/><text x="448" y="195" text-anchor="middle" class="num">4</text>
+    <text x="333" y="188" class="rtxt">typed payload (or 422)</text>
+
+    <line x1="322" y1="238" x2="595" y2="238" class="msg"/>
+    <circle cx="335" cy="230" r="8" fill="#134E7C"/><text x="335" y="233" text-anchor="middle" class="num">5</text>
+    <text x="347" y="226" class="mtxt">get Account by id (404 if missing)</text>
+
+    <rect x="242" y="262" width="330" height="32" rx="8" class="note"/>
+    <circle cx="256" cy="278" r="8" fill="#8A5A13"/><text x="256" y="281" text-anchor="middle" class="num">6</text>
+    <text x="270" y="282" class="mtxt">side ∈ {BUY,SELL} · qty &gt; 0 · price &gt; 0</text>
+
+    <line x1="322" y1="322" x2="717" y2="322" class="msg"/>
+    <circle cx="335" cy="314" r="8" fill="#134E7C"/><text x="335" y="317" text-anchor="middle" class="num">7</text>
+    <text x="347" y="310" class="mtxt">total 15,000.00 &gt; cash_balance ?</text>
+
+    <line x1="717" y1="358" x2="322" y2="358" class="ret"/>
+    <circle cx="704" cy="350" r="8" fill="#8A5A13"/><text x="704" y="353" text-anchor="middle" class="num">8</text>
+    <text x="333" y="346" class="rtxt">enough cash → proceed (else 400 Insufficient funds)</text>
+
+    <line x1="322" y1="396" x2="717" y2="396" class="msg"/>
+    <circle cx="335" cy="388" r="8" fill="#134E7C"/><text x="335" y="385" text-anchor="middle" class="num">9</text>
+    <text x="347" y="384" class="mtxt">cash_balance -= 15,000.00</text>
+
+    <line x1="322" y1="434" x2="595" y2="434" class="msg"/>
+    <circle cx="335" cy="426" r="8" fill="#134E7C"/><text x="335" y="429" text-anchor="middle" class="num">10</text>
+    <text x="347" y="422" class="mtxt">add(Trade AAPL BUY 100 @ 150)</text>
+
+    <line x1="322" y1="472" x2="595" y2="472" class="msg"/>
+    <circle cx="335" cy="464" r="8" fill="#134E7C"/><text x="335" y="467" text-anchor="middle" class="num">11</text>
+    <text x="347" y="460" class="mtxt">commit — trade + cash saved together</text>
+
+    <line x1="595" y1="510" x2="322" y2="510" class="ret"/>
+    <circle cx="582" cy="502" r="8" fill="#8A5A13"/><text x="582" y="505" text-anchor="middle" class="num">12</text>
+    <text x="333" y="498" class="rtxt">refresh → trade with id, timestamp</text>
+
+    <line x1="322" y1="548" x2="461" y2="548" class="msg"/>
+    <circle cx="335" cy="540" r="8" fill="#134E7C"/><text x="335" y="543" text-anchor="middle" class="num">13</text>
+    <text x="347" y="536" class="mtxt">serialize via TradeResponse (+ total_value)</text>
+
+    <line x1="322" y1="586" x2="183" y2="586" class="ret"/>
+    <circle cx="309" cy="578" r="8" fill="#8A5A13"/><text x="309" y="581" text-anchor="middle" class="num">14</text>
+    <text x="193" y="574" class="rtxt">201 Created + trade JSON</text>
+
+    <line x1="183" y1="624" x2="322" y2="624" class="msg"/>
+    <circle cx="196" cy="616" r="8" fill="#134E7C"/><text x="196" y="619" text-anchor="middle" class="num">15</text>
+    <text x="208" y="612" class="mtxt">refresh(): GET portfolio + GET trades</text>
+
+    <line x1="183" y1="662" x2="62" y2="662" class="ret"/>
+    <circle cx="170" cy="654" r="8" fill="#8A5A13"/><text x="170" y="657" text-anchor="middle" class="num">16</text>
+    <text x="72" y="650" class="rtxt">green banner · cards, tables update</text>
+
+    <rect x="470" y="690" width="250" height="32" rx="8" fill="#E4EEF6" stroke="#134E7C"/>
+    <circle cx="484" cy="706" r="8" fill="#134E7C"/><text x="484" y="709" text-anchor="middle" class="num">17</text>
+    <text x="498" y="710" class="mtxt">get_db() closes the session</text>
+  </svg>
+  <figcaption>Example values shown: BUY 100 AAPL @ $150 = $15,000. Steps 7–11 are the transaction: check, adjust cash, record trade, one commit.</figcaption>
+  </figure>
+
+  <h3>Reading the diagram step by step</h3>
+  <div class="tablewrap"><table>
+    <tr><th>#</th><th>What happens</th><th>Where in the code</th></tr>
+    <tr><td>1–2</td><td>The click handler gathers the form values, converts quantity/price to numbers, and fetch() POSTs them.</td><td>script.js lines 84–96</td></tr>
+    <tr><td>3–4</td><td>FastAPI validates the JSON against TradeCreate before your function runs; wrong types stop here with 422.</td><td>schema.py 9–14; main.py 61</td></tr>
+    <tr><td>5–6</td><td>Fetch the account (404 if it doesn't exist), then the rule gates: valid side, positive quantity and price.</td><td>main.py 62–69</td></tr>
+    <tr><td>7–8</td><td>The BUY check: does total cost exceed cash? If yes, 400 "Insufficient funds" — which script.js catches and shows in the red banner.</td><td>main.py 70–73; script.js 12, 95</td></tr>
+    <tr><td>9–11</td><td>The transaction: subtract cash on the account object, add the Trade row, and commit once — both changes saved atomically.</td><td>main.py 74, 79–82</td></tr>
+    <tr><td>12–14</td><td>Refresh pulls the auto-assigned id/timestamp back, TradeResponse computes total_value, and 201 + JSON returns to the browser.</td><td>main.py 83–84; schema.py 28–31</td></tr>
+    <tr><td>15–16</td><td>script.js immediately re-fetches the portfolio and history so the cards, tables, and cash figure all show the new reality, and the green banner confirms.</td><td>script.js 43–65, 93–94</td></tr>
+    <tr><td>17</td><td>The session closes in get_db()'s finally block, request complete.</td><td>database.py 18–19</td></tr>
+  </table></div>
+
+  <div class="tip"><b>Trace the failure path too:</b> if step 8 rejects, steps 9–13 never happen — no cash moved, no row written — and the flow jumps straight to a 400 response, which becomes the red banner via script.js line 12. Error paths are half of real programming.</div>
+</section>
+
+<!-- ============ TAB 7: SETUP GUIDE ============ -->
+<section class="tab" id="setup">
+  <h2>Step-by-step guide — from GitHub to running app</h2>
+  <ol class="steps">
+    <li><b class="t">Create the GitHub repository</b>
+      Log in at github.com → <b>+</b> (top right) → <i>New repository</i>. Name it <code>trade-app</code>, set Private, tick <i>Add a README file</i>, choose the <b>Python</b> .gitignore template. Create, then copy the HTTPS clone URL from the green <i>Code</i> button.</li>
+    <li><b class="t">Clone it into VS Code</b>
+      <code>Ctrl+Shift+P</code> → <i>Git: Clone</i> → paste the URL → pick a parent folder → <i>Open</i>. First time with Git only:
+      <pre class="cmd">git config --global user.name "Your Name"
+git config --global user.email "you@example.com"</pre></li>
+    <li><b class="t">Generate the project with Claude Code</b>
+      Open the Claude Code panel and paste the full trade-app prompt in one message. Verify the app/, frontend/ folders, demo.py, requirements.txt, and .gitignore were all created.</li>
+    <li><b class="t">Create and activate the virtual environment</b>
+      <pre class="cmd">python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+source .venv/bin/activate</pre>
+      Confirm <code>(.venv)</code> appears in the prompt; re-activate in every new terminal.</li>
+    <li><b class="t">Install the dependencies</b>
+      <pre class="cmd">pip install -r requirements.txt</pre></li>
+    <li><b class="t">Run the app</b>
+      <pre class="cmd">uvicorn app.main:app --reload</pre>
+      One command serves both halves: the page at <code>http://127.0.0.1:8000</code> and the API docs at <code>/docs</code>. First start creates trades.db.</li>
+    <li><b class="t">Test the frontend, docs, and demo</b>
+      Create an account ($100,000 virtual cash) → BUY AAPL × 100 @ 150 → watch cash and portfolio update → try a BUY you can't afford and enjoy the red "Insufficient funds" banner. Then in a second terminal (activate .venv first): <code>python demo.py</code>.</li>
+    <li><b class="t">Commit and push to GitHub</b>
+      <pre class="cmd">git add .
+git commit -m "Initial trade app with FastAPI backend and JS frontend"
+git push</pre>
+      Refresh the repo page on github.com — your code is versioned and backed up. Repeat after every meaningful change.</li>
+  </ol>
+
+  <h3>Common problems &amp; fixes</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td><code>uvicorn is not recognized</code></td><td>.venv not active in this terminal.</td><td>Re-run step 4's activate command.</td></tr>
+    <tr><td><code>No module named 'app'</code></td><td>Running from the wrong folder.</td><td><code>cd</code> to the repo root — the parent of app/ — and rerun.</td></tr>
+    <tr><td>Page loads but numbers stay "–"</td><td>No account exists yet, or a JS error.</td><td>Create an account first; press F12 → Console tab to see any script.js errors.</td></tr>
+    <tr><td>/docs works but / gives 404</td><td>StaticFiles mount missing or not last, or the frontend folder is misnamed.</td><td>Confirm main.py's last line and that the folder is exactly <code>frontend/</code>.</td></tr>
+    <tr><td><code>git push</code> asks for a password repeatedly</td><td>GitHub needs a token or sign-in, not your account password.</td><td>Let VS Code's GitHub sign-in prompt handle authentication when it appears.</td></tr>
+    <tr><td>Changed a column but the table didn't change</td><td>create_all never alters existing tables.</td><td>Stop the server, delete trades.db, restart (real projects use migrations).</td></tr>
+  </table></div>
+
+  <div class="tip"><b>Learning loop for this project:</b> add one feature end to end — e.g. a "realized profit" number: compute it in the portfolio endpoint, add it to PortfolioResponse, show it in a fourth card. You'll touch main.py → schema.py → index.html → script.js, which is exactly the full-stack muscle this project exists to build. Then <code>git add . && git commit && git push</code>.</div>
+</section>
+
+
+<!-- ============ TAB 8: RUN & DEPLOY ============ -->
+<section class="tab" id="deploy">
+  <h2>Running &amp; deploying the app — three environments</h2>
+  <p>These steps match your actual generated code: endpoints in <code>app/routes/trades.py</code> plugged into <code>app/main.py</code> via a router, tables created by <code>init_db()</code>, and the database path resolved in <code>app/database.py</code>. The run command is the same everywhere; only the surroundings change.</p>
+
+  <div class="card">
+    <p><b>Two flags you will meet in the cloud steps</b> — worth understanding once:</p>
+    <p><code>--host 0.0.0.0</code> — locally, Uvicorn listens on 127.0.0.1, which means "this machine only". On a cloud server, requests arrive from outside the machine, so the server must listen on all network interfaces: that is what 0.0.0.0 means.</p>
+    <p><code>--port $PORT</code> — cloud platforms decide which port your app gets and publish it in an environment variable named PORT. <code>$PORT</code> reads that variable, so your start command works no matter which port the platform assigns.</p>
+  </div>
+
+  <h2>Environment 1 — VS Code: terminal + Postman extension</h2>
+  <p>(The extension is called <b>Postman</b> — the API-testing tool. It gives you a point-and-click way to fire requests at your API without writing any code, and saves them for reuse.)</p>
+
+  <ol class="steps">
+    <li><b class="t">Run the server in the terminal</b>
+      Open the trade_app folder in VS Code, open a terminal (<code>Ctrl + `</code>), activate the environment and start:
+      <pre class="cmd"># Windows
+.venv\Scripts\activate
+# macOS / Linux:  source .venv/bin/activate
+
+uvicorn app.main:app --reload</pre>
+      Run this from the trade_app root (the folder containing app/) — the code imports everything as <code>app.database</code>, <code>app.routes</code>, so Python must be started where the app package is visible. Quick check: <code>http://127.0.0.1:8000/docs</code> should load.</li>
+    <li><b class="t">Install the Postman extension</b>
+      Extensions view (<code>Ctrl+Shift+X</code>) → search <b>Postman</b> → install the one published by Postman → click the new Postman icon in the sidebar → sign in (a free account is enough). VS Code now has a full API client next to your code.</li>
+    <li><b class="t">Send your first request</b>
+      In the Postman panel: <i>New HTTP Request</i>. Method <b>POST</b>, URL <code>http://127.0.0.1:8000/api/accounts</code>. Open the <i>Body</i> tab → <i>raw</i> → <i>JSON</i>, paste:
+      <pre class="cmd">{
+  "owner_name": "Asha Rao",
+  "email": "asha@example.com"
+}</pre>
+      Press <b>Send</b>. You should get <b>201 Created</b> and the account JSON — note the <code>id</code> and the $100,000 cash_balance.</li>
+    <li><b class="t">Work through the whole API</b>
+      Create these requests one by one (bodies below). Watch the two failure requests return your own 400 messages — that is the API's contract working.
+    </li>
+    <li><b class="t">Save everything as a Collection</b>
+      In Postman, click <i>Save</i> on each request into a collection named <b>Trade Station</b>. From now on, after any code change you can replay the whole collection in seconds — this is how professionals regression-test an API, and it complements /docs (good for exploring) with something repeatable.</li>
+  </ol>
+
+  <div class="tablewrap"><table>
+    <tr><th>#</th><th>Method &amp; URL</th><th>Body (raw JSON)</th><th>Expect</th></tr>
+    <tr><td>1</td><td>POST /api/accounts</td><td>{"owner_name": "Asha Rao", "email": "asha@example.com"}</td><td>201 — account with id 1</td></tr>
+    <tr><td>2</td><td>POST /api/trades</td><td>{"account_id": 1, "symbol": "AAPL", "side": "BUY", "quantity": 100, "price": 150}</td><td>201 — cash drops to 85,000</td></tr>
+    <tr><td>3</td><td>POST /api/trades</td><td>{"account_id": 1, "symbol": "AAPL", "side": "SELL", "quantity": 40, "price": 165}</td><td>201 — a legal sell</td></tr>
+    <tr><td>4</td><td>POST /api/trades</td><td>{"account_id": 1, "symbol": "TSLA", "side": "SELL", "quantity": 5, "price": 220}</td><td>400 — "Insufficient shares…"</td></tr>
+    <tr><td>5</td><td>POST /api/trades</td><td>{"account_id": 1, "symbol": "BRK", "side": "BUY", "quantity": 9999, "price": 500}</td><td>400 — "Insufficient funds…"</td></tr>
+    <tr><td>6</td><td>GET /api/trades?account_id=1&amp;side=BUY</td><td>— (no body)</td><td>200 — only the BUY trades</td></tr>
+    <tr><td>7</td><td>GET /api/accounts/1/portfolio</td><td>— (no body)</td><td>200 — holdings + totals</td></tr>
+    <tr><td>8</td><td>PUT /api/trades/2/cancel</td><td>— (no body)</td><td>200 — status CANCELLED, cash reversed</td></tr>
+  </table></div>
+
+  <div class="tip"><b>Alternative:</b> if you prefer something lighter, the <i>Thunder Client</i> extension does the same job (requests, collections) with no account sign-in. The concepts transfer one-to-one.</div>
+
+  <h2>Environment 2 — Deploying to Render.com</h2>
+  <p>Render pulls your code from GitHub, builds it, and runs it on a public URL — and redeploys automatically every time you push. Prerequisite: the app is committed and pushed to your GitHub repository.</p>
+
+  <ol class="steps">
+    <li><b class="t">Push your latest code</b>
+      <pre class="cmd">git add .
+git commit -m "Ready for deployment"
+git push</pre>
+      Confirm on github.com that app/, frontend/, and requirements.txt are all there at the repository root.</li>
+    <li><b class="t">Create a Render account</b>
+      Go to <code>render.com</code> → <i>Get Started</i> → sign up with your <b>GitHub</b> account. Signing up with GitHub is the shortcut: it lets Render see your repositories directly.</li>
+    <li><b class="t">Create a Web Service from your repo</b>
+      On the dashboard: <i>New +</i> → <b>Web Service</b> → connect your GitHub if prompted → pick the <code>trade-app</code> repository. (You can grant Render access to just this one repo.)</li>
+    <li><b class="t">Fill in the service settings</b>
+      <b>Name:</b> trade-station (becomes part of your URL) · <b>Language:</b> Python 3 · <b>Branch:</b> main<br>
+      <b>Build Command:</b>
+      <pre class="cmd">pip install -r requirements.txt</pre>
+      <b>Start Command:</b>
+      <pre class="cmd">uvicorn app.main:app --host 0.0.0.0 --port $PORT</pre>
+      Note it is <code>app.main:app</code> — same module path as your local run — plus the two cloud flags explained at the top of this tab.</li>
+    <li><b class="t">Pick the free instance type and create</b>
+      Choose the free tier (fine for learning; check the current plans page), then <i>Create Web Service</i>. Render clones the repo, runs the build, then the start command — you can watch every line in the live log, exactly like your local terminal.</li>
+    <li><b class="t">Open your live app</b>
+      When the log says the service is live, click the URL at the top — something like <code>https://trade-station.onrender.com</code>. Your frontend loads for anyone on the internet, and <code>/docs</code> works too. Create an account and place a trade to prove it end to end.</li>
+    <li><b class="t">Deploy updates by pushing</b>
+      From now on <code>git push</code> is your deploy button: Render detects the push, rebuilds, and restarts automatically. Watch it happen once in the <i>Events</i> tab — it makes the whole pipeline click.</li>
+  </ol>
+
+  <div class="tip"><b>Free-tier behavior:</b> free services spin down after ~15 minutes without traffic, so the first visit afterwards takes up to a minute to wake — normal, not a bug. Also see the data warning at the bottom of this tab.</div>
+
+  <h2>Environment 3 — Deploying to Railway</h2>
+  <p>Railway does the same job with even more automation — it usually detects a Python app and builds it without being told how. (Railway is credit/usage-based rather than having a permanent free tier; the trial credit is plenty for this project — check current pricing.)</p>
+
+  <ol class="steps">
+    <li><b class="t">Sign in with GitHub</b>
+      Go to <code>railway.app</code> → <i>Login</i> → <b>GitHub</b>. Same idea as Render: the GitHub login is what lets Railway deploy your repositories.</li>
+    <li><b class="t">Create a project from your repo</b>
+      <i>New Project</i> → <b>Deploy from GitHub repo</b> → authorize Railway for your account or just the trade-app repo when prompted → select <code>trade-app</code>. Railway immediately starts building: it sees requirements.txt, recognizes a Python app, and installs your dependencies on its own.</li>
+    <li><b class="t">Set the start command</b>
+      Click the service card → <b>Settings</b> → find the <i>Deploy</i> section → <b>Custom Start Command</b>:
+      <pre class="cmd">uvicorn app.main:app --host 0.0.0.0 --port $PORT</pre>
+      Save — Railway redeploys with the new command. (Same command as Render: this is the one piece of deployment knowledge that transfers everywhere.)</li>
+    <li><b class="t">Generate a public URL</b>
+      Still in <b>Settings</b> → <i>Networking</i> → <b>Generate Domain</b>. Railway gives you a URL like <code>https://trade-app-production.up.railway.app</code>. Until you do this, the app runs but has no public address.</li>
+    <li><b class="t">Test the live app</b>
+      Open the domain: the frontend should load, <code>/docs</code> should work, and a full account-and-trade round trip should behave exactly like localhost. If something fails, the <i>Deployments</i> tab shows the same logs you would see in your terminal — read the last few lines first.</li>
+    <li><b class="t">Deploy updates by pushing</b>
+      Like Render, every <code>git push</code> to main triggers a fresh build and deploy automatically.</li>
+  </ol>
+
+  <h3>The one warning that applies to both platforms</h3>
+  <div class="card">
+    <p><b>Your SQLite data is temporary in the cloud.</b> Both Render and Railway give your app an <i>ephemeral</i> filesystem: every redeploy (and, on Render's free tier, every spin-down) starts from a fresh copy of your repository — and since <code>.gitignore</code> correctly keeps <code>trades.db</code> out of Git, the database starts empty each time. For a learning demo that's fine, and it's a feature in disguise: you get a clean slate on every deploy.</p>
+    <p>The real-world fix, when you're ready for it, is a managed database: both platforms offer hosted PostgreSQL, and because of how <code>database.py</code> is structured, switching means reading the connection string from an environment variable instead of building a SQLite path — one focused change in one file. That's a great next project, and a direct payoff of the layered architecture in this guide.</p>
+  </div>
+
+  <h3>Quick troubleshooting for cloud deploys</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+    <tr><td>Build fails: requirements.txt not found</td><td>The repo root isn't the trade_app folder (files are nested one level down).</td><td>Make sure app/, frontend/, requirements.txt sit at the top level of the repository, commit, push.</td></tr>
+    <tr><td>Crash on start: "No module named 'app'"</td><td>Start command doesn't match the package layout.</td><td>Use exactly <code>uvicorn app.main:app --host 0.0.0.0 --port $PORT</code>.</td></tr>
+    <tr><td>Deployed, but the page never loads</td><td>App is listening on 127.0.0.1 or a fixed port.</td><td>The <code>--host 0.0.0.0 --port $PORT</code> flags are not optional in the cloud.</td></tr>
+    <tr><td>Worked yesterday, data gone today</td><td>Ephemeral filesystem (see the warning above).</td><td>Expected with SQLite; move to the platform's PostgreSQL when persistence matters.</td></tr>
+    <tr><td>First request takes ~a minute (Render free)</td><td>The free instance was asleep.</td><td>Normal — it wakes on the first request.</td></tr>
+  </table></div>
+
+  <div class="tip"><b>The mental model:</b> deployment is just "run the same start command on someone else's computer, triggered by git push." Terminal → Postman → Render → Railway all exercise the exact same app — which is the proof that your layers are cleanly separated.</div>
+</section>
+
+</main>
+
+<script>
+  const nav = document.getElementById('tabs');
+  nav.addEventListener('click', e => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    nav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section.tab').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.t).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+</script>
+</body>
+</html>
