@@ -63,3 +63,24 @@ def get_db():
         yield db          # the endpoint runs here, using `db`
     finally:
         db.close()        # always runs, even on errors
+
+
+# ---------------------------------------------------------------------------
+# 6. init_db: create the tables
+# ---------------------------------------------------------------------------
+def init_db():
+    """
+    Create every table that does not already exist. Safe to call on every
+    startup: existing tables are left untouched.
+
+    Why is the import inside the function instead of at the top of the file?
+
+      * SQLAlchemy only knows a table exists once the class describing it has
+        been imported. Putting the import here means create_all() and the
+        import that makes it work can never be separated by accident.
+      * It also avoids a circular import: app/models.py imports Base from this
+        module, so this module cannot import app.models at the top level.
+    """
+    from app import models  # noqa: F401  (registers Account and Trade)
+
+    Base.metadata.create_all(bind=engine)
